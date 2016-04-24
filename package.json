@@ -1,0 +1,13 @@
+{
+	"name":        "vbb-telegram",
+	"description": "A Telegram bot for Berlin & Brandenburg public transport.",
+	"version":     "0.1.0",
+	"main":        "index.js",
+	"files":       ["index.js"],
+	"keywords":    ["vbb", "telegram", "bot", "departures", "routing", "journey"],
+	"author":      "Jannis R <mail@jannisr.de>",
+	"homepage":    "https://github.com/derhuerst/vbb-telegram",
+	"repository":  "git://github.com/derhuerst/vbb-telegram.git",
+	"license":     "ISC",
+	"engines":     {"node": ">=4"}
+}
