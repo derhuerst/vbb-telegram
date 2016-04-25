@@ -31,7 +31,7 @@ const dep = (bot) => (msg, match) => so(function* (msg, match) {
 		'Could\'t find this station.')
 
 	const deps = yield lib.deps(stations[0].id)
-	bot.sendMessage(msg.chat.id, render.deps(deps), {
+	bot.sendMessage(msg.chat.id, render.deps(stations[0], deps), {
 		parse_mode: 'Markdown'
 	})
 })(msg, match).catch((err) => console.error(err.stack))
