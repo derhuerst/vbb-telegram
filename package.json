@@ -23,6 +23,7 @@
 		"moment":                    "^2.13"
 	},
 	"scripts": {
+		"start":   "node index.js",
 		"deploy":  "./deploy",
 		"ssh":     "ssh -i ./.digital-ocean root@46.101.109.127"
 	}
