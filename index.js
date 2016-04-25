@@ -48,8 +48,26 @@ const nearby = (bot) => (msg) => so(function* (msg) {
 
 
 
+const route = (bot) => (msg, matches) => so(function* (msg) {
+	const from = station(matches[1], 1)[0]
+	if (!from) return bot.sendMessage(msg.chat.id,
+		'Could\'t find the first station.')
+	const to = station(matches[2], 1)[0]
+	if (!to) return bot.sendMessage(msg.chat.id,
+		'Could\'t find the second station.')
+
+	const route = yield lib.route(from.id, to.id)
+	console.log(route)
+	bot.sendMessage(msg.chat.id, render.route(from, to, route), {
+		parse_mode: 'Markdown'
+	})
+})(msg).catch((err) => console.error(err.stack))
+
+
+
 bot.onText(/\/(?:dep|departure|abfahrt) (.+)/, dep(bot))
 bot.onText(/\/(?:start|help|hilfe)/, help(bot))
+bot.onText(/\/(?:route|journey) (.+) to (.+)/, route(bot))
 bot.on('message', (msg) => {
 	if (!msg.text && msg.location) nearby(bot)(msg)
 })

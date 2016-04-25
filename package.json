@@ -19,7 +19,8 @@
 		"vbb-stations":              "^0.3",
 		"gps-distance":              "^0.0.4",
 		"ms":                        "^0.7.1",
-		"columnify":                 "^1.5.4"
+		"columnify":                 "^1.5.4",
+		"moment":                    "^2.13"
 	},
 	"scripts": {
 		"deploy":  "./deploy",
