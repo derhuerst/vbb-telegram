@@ -7,7 +7,6 @@ rsync -rav --delete -e 'ssh -i ./.digital-ocean' \
 	. root@46.101.109.127:~/vbb-telegram/
 
 ssh -i ./.digital-ocean root@46.101.109.127 "\
-export NODE_CONFIG='$NODE_CONFIG'
 cd ~/vbb-telegram
 npm i
 forever stop vbb-telegram

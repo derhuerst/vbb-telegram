@@ -1,5 +1,6 @@
 'use strict'
 
+const config  = require('config')
 const Bot     = require('node-telegram-bot-api')
 const so      = require('so')
 const station = require('vbb-stations-autocomplete')
@@ -7,7 +8,7 @@ const station = require('vbb-stations-autocomplete')
 const lib     = require('./lib')
 const render  = require('./lib/render')
 
-const token = '185371201:AAFg3SWFvAduoiNFSOZ0Gul5tJVinT7r84Q'
+const token = config.telegramToken
 const bot = new Bot(token, {polling: true})
 
 
