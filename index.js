@@ -56,11 +56,12 @@ const route = (bot) => (msg, matches) => so(function* (msg) {
 	if (!to) return bot.sendMessage(msg.chat.id,
 		'Could\'t find the second station.')
 
-	const route = yield lib.route(from.id, to.id)
-	console.log(route)
-	bot.sendMessage(msg.chat.id, render.route(from, to, route), {
-		parse_mode: 'Markdown'
-	})
+	const routes = yield lib.routes(from.id, to.id)
+	console.log(require('util').inspect(routes[3], {depth: null}))
+	bot.sendMessage(msg.chat.id, routes
+		.map((route) => render.route(from, to, route))
+		.join('\n\n---\n\n')
+	, {parse_mode: 'Markdown'})
 })(msg).catch((err) => console.error(err.stack))
 
 
