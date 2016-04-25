@@ -20,5 +20,9 @@
 		"gps-distance":              "^0.0.4",
 		"ms":                        "^0.7.1",
 		"columnify":                 "^1.5.4"
+	},
+	"scripts": {
+		"deploy":  "./deploy",
+		"ssh":     "ssh -i ./.digital-ocean root@46.101.109.127"
 	}
 }

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# upload files
+rsync -rav --delete -e 'ssh -i ./.digital-ocean' \
+	--exclude '.*' \
+	--exclude node_modules \
+	. root@46.101.109.127:~/vbb-telegram/
+
+ssh -i ./.digital-ocean root@46.101.109.127 "\
+export NODE_CONFIG='$NODE_CONFIG'
+cd ~/vbb-telegram
+npm i
+forever stop vbb-telegram
+forever start -a --uid vbb-telegram index.js"
