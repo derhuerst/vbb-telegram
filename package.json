@@ -9,5 +9,16 @@
 	"homepage":    "https://github.com/derhuerst/vbb-telegram",
 	"repository":  "git://github.com/derhuerst/vbb-telegram.git",
 	"license":     "ISC",
-	"engines":     {"node": ">=4"}
+	"engines":     {"node": ">=4"},
+	"dependencies": {
+		"node-telegram-bot-api":     "^0.21.1",
+		"so":                        "^1.0.1",
+		"vbb-stations-autocomplete": "^0.6.1",
+		"config":                    "^1.20.1",
+		"vbb-hafas":                 "^0.7.2",
+		"vbb-stations":              "^0.3",
+		"gps-distance":              "^0.0.4",
+		"ms":                        "^0.7.1",
+		"columnify":                 "^1.5.4"
+	}
 }
