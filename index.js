@@ -23,4 +23,19 @@ const dep = (bot) => (msg, match) => so(function* (msg, match) {
 	})
 })(msg, match).catch((err) => console.error(err.stack))
 
+
+
+const nearby = (bot) => (msg) => so(function* (msg) {
+	const lat = msg.location.latitude, lon = msg.location.longitude
+	const closest = yield lib.closest(lat, lon, 2000, 3)
+	bot.sendMessage(msg.chat.id, render.nearby(closest), {
+		parse_mode: 'Markdown'
+	})
+})(msg).catch((err) => console.error(err.stack))
+
+
+
 bot.onText(/\/(?:dep|departure|abfahrt) (.+)/, dep(bot))
+bot.on('message', (msg) => {
+	if (!msg.text && msg.location) nearby(bot)(msg)
+})
