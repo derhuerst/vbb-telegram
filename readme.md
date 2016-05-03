@@ -2,6 +2,8 @@
 
 **A Telegram bot for Berlin & Brandenburg public transport.**
 
+![the bot in action](screenshot.png)
+
 [![npm version](https://img.shields.io/npm/v/vbb-telegram.svg)](https://www.npmjs.com/package/vbb-telegram)
 [![dependency status](https://img.shields.io/david/dev/derhuerst/vbb-telegram.svg)](https://david-dm.org/derhuerst/vbb-telegram)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/vbb-telegram.svg)
