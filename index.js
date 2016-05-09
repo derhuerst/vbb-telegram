@@ -67,9 +67,9 @@ const route = (bot) => (msg, matches) => so(function* (msg) {
 
 
 
-bot.onText(/\/(?:dep|departure|abfahrt) (.+)/, dep(bot))
-bot.onText(/\/(?:start|help|hilfe)/, help(bot))
-bot.onText(/\/(?:route|journey) (.+) to (.+)/, route(bot))
+bot.onText(/\/(?:dep|departure|abfahrt) (.+)/i, dep(bot))
+bot.onText(/\/(?:start|help|hilfe)/i, help(bot))
+bot.onText(/\/(?:route|journey) (.+) to (.+)/i, route(bot))
 bot.on('message', (msg) => {
 	if (!msg.text && msg.location) nearby(bot)(msg)
 })
