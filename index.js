@@ -11,6 +11,12 @@ const render  = require('./lib/render')
 const token = config.telegramToken
 const bot = new Bot(token, {polling: true})
 
+const log = (msg) => console.info(
+	  msg.from.username
+	, new Date(msg.date).toTimeString()
+	, msg.text
+)
+
 
 
 const instructions = `\
@@ -27,6 +33,7 @@ const help = (bot) => (msg) =>
 
 
 const dep = (bot) => (msg, match) => so(function* (msg, match) {
+	log(msg)
 	const stations = station(match[1], 1)
 	if (stations.length === 0) return bot.sendMessage(msg.chat.id,
 		'Could\'t find this station.')
@@ -40,6 +47,7 @@ const dep = (bot) => (msg, match) => so(function* (msg, match) {
 
 
 const nearby = (bot) => (msg) => so(function* (msg) {
+	log(msg)
 	const lat = msg.location.latitude, lon = msg.location.longitude
 	const closest = yield lib.closest(lat, lon, 2000, 3)
 	bot.sendMessage(msg.chat.id, render.nearby(closest), {
@@ -50,6 +58,7 @@ const nearby = (bot) => (msg) => so(function* (msg) {
 
 
 const route = (bot) => (msg, matches) => so(function* (msg) {
+	log(msg)
 	const from = station(matches[1], 1)[0]
 	if (!from) return bot.sendMessage(msg.chat.id,
 		'Could\'t find the first station.')
