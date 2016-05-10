@@ -22,8 +22,8 @@ const log = (msg) => console.info(
 const instructions = `\
 You can use this bot to check public transport departures in Berlin & Brandenburg.
 
-\`/departure <station>\` – Show the next departures.
-\`/route <a> to <b>\` – Get routes from A to B.
+\`/a(bfahrt) <station> \` – Show the next departures.
+\`/r(oute)   <a> to <b>\` – Get routes from A to B.
 
 If you send a location, it will respond with the closest stations.
 `
@@ -32,7 +32,7 @@ const help = (bot) => (msg) =>
 
 
 
-const dep = (bot) => (msg, match) => so(function* (msg, match) {
+const departure = (bot) => (msg, match) => so(function* (msg, match) {
 	log(msg)
 	const stations = station(match[1], 1)
 	if (stations.length === 0) return bot.sendMessage(msg.chat.id,
@@ -76,9 +76,9 @@ const route = (bot) => (msg, matches) => so(function* (msg) {
 
 
 
-bot.onText(/\/(?:dep|departure|abfahrt) (.+)/i, dep(bot))
+bot.onText(/\/(?:a|abfahrt) (.+)/i, departure(bot))
 bot.onText(/\/(?:start|help|hilfe)/i, help(bot))
-bot.onText(/\/(?:route|journey) (.+) to (.+)/i, route(bot))
+bot.onText(/\/(?:r|route) (.+) to (.+)/i, route(bot))
 bot.on('message', (msg) => {
 	if (!msg.text && msg.location) nearby(bot)(msg)
 })
