@@ -13,6 +13,7 @@ const bot = new Bot(token, {polling: true})
 
 const log = (msg) => console.info(
 	  msg.from.username
+	, render.date(msg.date)
 	, render.time(msg.date)
 	, msg.text
 )
@@ -67,7 +68,6 @@ const route = (bot) => (msg, matches) => so(function* (msg) {
 		'Could\'t find the second station.')
 
 	const routes = yield lib.routes(from.id, to.id)
-	console.log(require('util').inspect(routes[3], {depth: null}))
 	bot.sendMessage(msg.chat.id, routes
 		.map((route) => render.route(from, to, route))
 		.join('\n\n---\n\n')
