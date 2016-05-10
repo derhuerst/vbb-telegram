@@ -13,7 +13,7 @@ const bot = new Bot(token, {polling: true})
 
 const log = (msg) => console.info(
 	  msg.from.username
-	, new Date(msg.date).toTimeString()
+	, render.time(msg.date)
 	, msg.text
 )
 
