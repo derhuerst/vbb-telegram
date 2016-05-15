@@ -20,7 +20,8 @@
 		"gps-distance":              "^0.0.4",
 		"ms":                        "^0.7.1",
 		"columnify":                 "^1.5.4",
-		"moment-timezone":           "^0.5.4"
+		"moment-timezone":           "^0.5.4",
+		"vbb-short-station-name":    "^0.1"
 	},
 	"scripts": {
 		"start":   "node index.js",
