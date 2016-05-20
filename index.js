@@ -3,7 +3,7 @@
 const config  = require('config')
 const Bot     = require('node-telegram-bot-api')
 const so      = require('so')
-const station = require('vbb-stations-autocomplete')
+const search  = require('vbb-find-station')
 
 const lib     = require('./lib')
 const render  = require('./lib/render')
@@ -35,12 +35,12 @@ const help = (bot) => (msg) =>
 
 const departure = (bot) => (msg, match) => so(function* (msg, match) {
 	log(msg)
-	const stations = station(match[1], 1)
-	if (stations.length === 0) return bot.sendMessage(msg.chat.id,
+	const station = yield search(match[1])
+	if (!station) return bot.sendMessage(msg.chat.id,
 		'Could\'t find this station.')
 
-	const deps = yield lib.deps(stations[0].id)
-	bot.sendMessage(msg.chat.id, render.deps(stations[0], deps), {
+	const deps = yield lib.deps(station.id)
+	bot.sendMessage(msg.chat.id, render.deps(station, deps), {
 		parse_mode: 'Markdown'
 	})
 })(msg, match).catch((err) => console.error(err.stack))
@@ -60,10 +60,10 @@ const nearby = (bot) => (msg) => so(function* (msg) {
 
 const route = (bot) => (msg, matches) => so(function* (msg) {
 	log(msg)
-	const from = station(matches[1], 1)[0]
+	const from = yield search(matches[1])
 	if (!from) return bot.sendMessage(msg.chat.id,
 		'Could\'t find the first station.')
-	const to = station(matches[2], 1)[0]
+	const to = yield search(matches[2])
 	if (!to) return bot.sendMessage(msg.chat.id,
 		'Could\'t find the second station.')
 
