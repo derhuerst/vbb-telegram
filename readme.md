@@ -4,7 +4,7 @@
 
 ![the bot in action](screenshot.png)
 
-[![npm version](https://img.shields.io/npm/v/vbb-telegram.svg)](https://www.npmjs.com/package/vbb-telegram)
+[![https://telegram.me/public_transport_bot](https://img.shields.io/badge/telegram-%40public__transport__bot-blue.svg)](https://telegram.me/public_transport_bot)
 [![dependency status](https://img.shields.io/david/dev/derhuerst/vbb-telegram.svg)](https://david-dm.org/derhuerst/vbb-telegram)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/vbb-telegram.svg)
 
