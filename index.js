@@ -92,7 +92,7 @@ bot.on('message', (msg) => {
 	command[id](ctx, msg)
 	.catch((e) => {
 		console.error(e.stack)
-		bot.sendMessage(id, `\
+		ctx.message(`\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`)
 	})
