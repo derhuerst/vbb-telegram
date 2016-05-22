@@ -6,29 +6,79 @@ const Bot     = require('node-telegram-bot-api')
 const _       = require('./lib/index')
 const render  = require('./lib/render')
 
-const departures = require('./lib/departures')
-const routes = require('./lib/routes')
-const nearby = require('./lib/nearby')
+const commands = {
+	  help:       require('./lib/help')
+	, departures: require('./lib/departures')
+	, routes:     require('./lib/routes')
+	, nearby:     require('./lib/nearby')
+}
+
+
+
+const log = (msg) => console.info(
+	  msg.from.username
+	, render.date(msg.date)
+	, render.time(msg.date)
+	, msg.text
+		? msg.text
+	  	: msg.location
+	  		? msg.location.latitude + '|' + msg.location.latitude
+	  		: ''
+)
 
 
 
 const token = config.telegramToken
 const bot = new Bot(token, {polling: true})
 
-const instructions = `\
-You can use this bot to check public transport departures in Berlin & Brandenburg.
+// todo: store in Redis
+const state = {} // by user id
+const command = {} // by user id
 
-\`/a(bfahrt) <station> \` – Show the next departures.
-\`/r(oute)   <a> to <b>\` – Get routes from A to B.
+const context = (id) => ({
+	  get: (key) => {
+		if (!state[id]) state[id] = {}
+		return Promise.resolve(state[id][key])
+	}
+	, set: (key, value) => {
+		if (!state[id]) state[id] = {}
+		state[id][key] = value
+		return Promise.resolve(value)
+	}
+	, done: () => {
+		state[id] = {}
+		command[id] = null
+		return Promise.resolve(null)
+	}
+	, message: (text) =>
+		bot.sendMessage(id, text, {parse_mode: 'Markdown'})
+	, typing: () => bot.sendChatAction(id, 'typing')
+})
 
-If you send a location, it will respond with the closest stations.
-`
-const help = (msg) =>
-	bot.sendMessage(msg.chat.id, instructions, {parse_mode: 'Markdown'})
 
-bot.onText(/\/(?:a|abfahrt) (.+)/i, departures(bot))
-bot.onText(/\/(?:start|help|hilfe)/i, help)
-bot.onText(/\/(?:r|route) (.+) to (.+)/i, routes(bot))
+
 bot.on('message', (msg) => {
-	if (!msg.text && msg.location) nearby(bot)(msg)
+	log(msg)
+	const id = msg.from ? msg.from.id : msg.chat.id
+	const ctx = context(id)
+
+	if (msg.text && msg.text[0] === '/') {
+		ctx.done()
+		if (/^\/(?:a|abfahrt)/i.test(msg.text))
+			command[id] = commands.departures
+		else if (/^\/(?:r|route)/i.test(msg.text))
+			command[id] = commands.routes
+		else if (/^\/(?:n|nearby)/i.test(msg.text))
+			command[id] = commands.nearby
+		else if (/^\/(?:help|start)/i.test(msg.text))
+			command[id] = commands.help
+	} else if (!command[id]) command[id] = commands.help
+
+	command[id](ctx, msg)
+	.catch((e) => {
+		console.error(e.stack)
+		bot.sendMessage(id, `\
+*Oh snap! An error occured.*
+Report this to my creator @derhuerst to help making this bot better.`)
+	})
 })
