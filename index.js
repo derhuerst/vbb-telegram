@@ -35,25 +35,36 @@ const bot = new Bot(token, {polling: true})
 const state = {} // by user id
 const command = {} // by user id
 
-const context = (id) => ({
-	  get: (key) => {
+const context = (id) => {
+	const get = (key) => {
 		if (!state[id]) state[id] = {}
 		return Promise.resolve(state[id][key])
 	}
-	, set: (key, value) => {
+	const set = (key, value) => {
 		if (!state[id]) state[id] = {}
 		state[id][key] = value
 		return Promise.resolve(value)
 	}
-	, done: () => {
+	const done = () => {
 		state[id] = {}
 		command[id] = null
 		return Promise.resolve(null)
 	}
-	, message: (text) =>
-		bot.sendMessage(id, text, {parse_mode: 'Markdown'})
-	, typing: () => bot.sendChatAction(id, 'typing')
-})
+	const message = (text, props) =>
+		bot.sendMessage(id, text,
+			Object.assign({parse_mode: 'Markdown'}, props || {}))
+	const keyboard = (text, keys) => message(text, {
+		reply_markup: JSON.stringify({
+			keyboard:          keys.map((k) => [k]),
+			one_time_keyboard: true
+		})
+	})
+	const requestLocation = (text, caption) => keyboard(text,
+		[{text: caption, request_location: true}])
+	const typing = () => bot.sendChatAction(id, 'typing')
+
+	return {get, set, done, message, keyboard, requestLocation, typing}
+}
 
 
 
