@@ -62,8 +62,12 @@ const context = (id) => {
 	const requestLocation = (text, caption) => keyboard(text,
 		[{text: caption, request_location: true}])
 	const typing = () => bot.sendChatAction(id, 'typing')
+	const location = (lat, long) => bot.sendLocation(id, lat, long)
 
-	return {get, set, done, message, keyboard, requestLocation, typing}
+	return {
+		get, set, done,
+		message, keyboard, requestLocation, typing, location
+	}
 }
 
 
