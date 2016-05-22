@@ -9,5 +9,6 @@ rsync -rav --delete -e 'ssh -i ./.digital-ocean' \
 ssh -i ./.digital-ocean root@46.101.109.127 "\
 cd ~/vbb-telegram
 npm i
+export NODE_ENV=production
 forever stop vbb-telegram
 forever start -a --uid vbb-telegram index.js"

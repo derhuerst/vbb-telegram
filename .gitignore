@@ -6,4 +6,5 @@ node_modules
 npm-debug.log
 
 .digital-ocean
-config/default.json
+config/*
+!config/default.json
