@@ -29,7 +29,7 @@ const log = (msg) => console.info(
 const keys = [
 	  {text: '/a Show departures at a station'}
 	, {text: '/r Get routes from A to B.'}
-	, {text: '/n Show station around.'}
+	, {text: '/n Show stations around.'}
 ]
 
 
