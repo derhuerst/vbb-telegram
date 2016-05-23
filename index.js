@@ -17,8 +17,8 @@ const commands = {
 
 const log = (msg) => console.info(
 	  msg.from.username
-	, render.date(msg.date)
-	, render.time(msg.date)
+	, render.date(msg.date * 1000)
+	, render.time(msg.date * 1000)
 	, msg.text
 		? msg.text
 	  	: msg.location
@@ -94,8 +94,7 @@ bot.on('message', (msg) => {
 			command[id] = commands.routes
 		else if (/^\/(?:n|nearby)/i.test(msg.text))
 			command[id] = commands.nearby
-		else if (/^\/(?:help|start)/i.test(msg.text))
-			command[id] = commands.help
+		else command[id] = commands.help
 	} else if (!command[id]) command[id] = commands.help
 
 	command[id](ctx, msg)
