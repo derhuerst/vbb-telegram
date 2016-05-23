@@ -26,6 +26,12 @@ const log = (msg) => console.info(
 	  		: ''
 )
 
+const keys = [
+	  {text: '/a Show departures at a station'}
+	, {text: '/r Get routes from A to B.'}
+	, {text: '/n Show station around.'}
+]
+
 
 
 const token = config.telegramToken
@@ -51,8 +57,10 @@ const context = (id) => {
 		return Promise.resolve(null)
 	}
 	const message = (text, props) =>
-		bot.sendMessage(id, text,
-			Object.assign({parse_mode: 'Markdown'}, props || {}))
+		bot.sendMessage(id, text, Object.assign({
+			parse_mode:    'Markdown',
+			hide_keyboard: true
+		}, props || {}))
 	const keyboard = (text, keys) => message(text, {
 		reply_markup: JSON.stringify({
 			keyboard:          keys.map((k) => [k]),
@@ -66,7 +74,8 @@ const context = (id) => {
 
 	return {
 		get, set, done,
-		message, keyboard, requestLocation, typing, location
+		message, keyboard, requestLocation, typing, location,
+		keys
 	}
 }
 
@@ -92,8 +101,9 @@ bot.on('message', (msg) => {
 	command[id](ctx, msg)
 	.catch((e) => {
 		console.error(e.stack)
-		ctx.message(`\
+		ctx.done()
+		ctx.keyboard(`\
 *Oh snap! An error occured.*
-Report this to my creator @derhuerst to help making this bot better.`)
+Report this to my creator @derhuerst to help making this bot better.`, ctx.keys)
 	})
 })
