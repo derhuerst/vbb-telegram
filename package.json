@@ -13,10 +13,7 @@
 	"dependencies": {
 		"config":                    "^1.20.1",
 		"node-telegram-bot-api":     "^0.21.1",
-		"vbb-hafas":                 "^0.8.1",
-		"hifo":                      "^0.6",
-		"vbb-stations":              "^0.4",
-		"gps-distance":              "^0.0.4",
+		"vbb-hafas":                 "^0.10",
 		"ms":                        "^0.7.1",
 		"vbb-lines-at":              "^0.1",
 		"columnify":                 "^1.5.4",
