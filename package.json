@@ -21,7 +21,7 @@
 		"moment-timezone":           "^0.5.4",
 		"vbb-short-station-name":    "^0.1",
 		"so":                        "^1.0.1",
-		"parse-messy-time":          "^1.2.2",
+		"parse-messy-time":          "^2",
 		"vbb-find-station":          "^0.1"
 	},
 	"scripts": {
