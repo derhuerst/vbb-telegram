@@ -12,7 +12,7 @@
 	"engines":     {"node": ">=6"},
 	"dependencies": {
 		"config":                    "^1.20.1",
-		"node-telegram-bot-api":     "^0.21.1",
+		"node-telegram-bot-api":     "^0.23.3",
 		"vbb-hafas":                 "^0.10",
 		"ms":                        "^0.7.1",
 		"vbb-lines-at":              "^0.1",
@@ -21,7 +21,7 @@
 		"moment-timezone":           "^0.5.4",
 		"vbb-short-station-name":    "^0.1",
 		"so":                        "^1.0.1",
-		"parse-messy-time":          "^2",
+		"parse-messy-time":          "^2.0.2",
 		"vbb-find-station":          "^0.1"
 	},
 	"scripts": {
