@@ -27,6 +27,6 @@
 	"scripts": {
 		"start":   "node index.js",
 		"deploy":  "./deploy",
-		"ssh":     "ssh -i ./.digital-ocean root@46.101.109.127"
+		"ssh":     "ssh -i ./.scaleway root@vbb-telegram.jannisr.de"
 	}
 }
