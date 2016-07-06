@@ -2,9 +2,11 @@
 
 const config  = require('config')
 const Bot     = require('node-telegram-bot-api')
+const so      = require('so')
 
 const _       = require('./lib/index')
 const render  = require('./lib/render')
+const context = require('./lib/context')
 
 const commands = {
 	  help:       require('./lib/help')
@@ -26,83 +28,39 @@ const log = (msg) => console.info(
 	  		: ''
 )
 
-const keys = [
-	  {text: '/a Show departures at a station'}
-	, {text: '/r Get routes from A to B.'}
-	, {text: '/n Show stations around.'}
-]
+const parseCommand = (msg) => {
+	if ('string' !== typeof msg.text) return null
+	const t = msg.text.trim()
+	if (t[0] !== '/') return null
+	if (/^\/(?:a|abfahrt)/i.test(t))		return 'departures'
+	else if (/^\/(?:r|route)/i.test(t))		return 'routes'
+	else if (/^\/(?:n|nearby)/i.test(t))	return 'nearby'
+	else									return 'help'
+}
 
 
 
 const token = config.telegramToken
 const bot = new Bot(token, {polling: true})
 
-// todo: store in Redis
-const state = {} // by user id
-const command = {} // by user id
-
-const context = (id) => {
-	const get = (key) => {
-		if (!state[id]) state[id] = {}
-		return Promise.resolve(state[id][key])
-	}
-	const set = (key, value) => {
-		if (!state[id]) state[id] = {}
-		state[id][key] = value
-		return Promise.resolve(value)
-	}
-	const done = () => {
-		state[id] = {}
-		command[id] = null
-		return Promise.resolve(null)
-	}
-	const message = (text, props) =>
-		bot.sendMessage(id, text, Object.assign({
-			parse_mode:    'Markdown',
-			hide_keyboard: true
-		}, props || {}))
-	const keyboard = (text, keys) => message(text, {
-		reply_markup: JSON.stringify({
-			keyboard:          keys.map((k) => [k]),
-			one_time_keyboard: true
-		})
-	})
-	const requestLocation = (text, caption) => keyboard(text,
-		[{text: caption, request_location: true}])
-	const typing = () => bot.sendChatAction(id, 'typing')
-	const location = (lat, long) => bot.sendLocation(id, lat, long)
-
-	return {
-		get, set, done,
-		message, keyboard, requestLocation, typing, location,
-		keys
-	}
-}
-
-
-
-bot.on('message', (msg) => {
+bot.on('message', so(function* (msg) {
 	log(msg)
 	const id = msg.from ? msg.from.id : msg.chat.id
-	const ctx = context(id)
+	const ctx = context(bot, id)
 
-	if (msg.text && msg.text[0] === '/') {
-		ctx.done()
-		if (/^\/(?:a|abfahrt)/i.test(msg.text))
-			command[id] = commands.departures
-		else if (/^\/(?:r|route)/i.test(msg.text))
-			command[id] = commands.routes
-		else if (/^\/(?:n|nearby)/i.test(msg.text))
-			command[id] = commands.nearby
-		else command[id] = commands.help
-	} else if (!command[id]) command[id] = commands.help
+	let command = parseCommand(msg)
+	if (command) {
+		yield ctx.set('command', command)
+		command = commands[command]
+	} else
+		command = commands[yield ctx.get('command')]
 
-	command[id](ctx, msg)
-	.catch((e) => {
+	try { yield command(ctx, msg) }
+	catch (e) {
 		console.error(e.stack)
 		ctx.done()
 		ctx.keyboard(`\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`, ctx.keys)
-	})
-})
+	}
+}))
