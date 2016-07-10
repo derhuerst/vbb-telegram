@@ -4,8 +4,8 @@ const so     = require('so')
 const time   = require('parse-messy-time')
 const hash = require('shorthash').unique
 
-const api = require('./api')
-const render = require('./render')
+const api = require('../lib/api')
+const render = require('../lib/render')
 
 
 
