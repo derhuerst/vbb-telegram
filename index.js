@@ -18,7 +18,7 @@ const commands = {
 
 
 const log = (msg) => console.info(
-	  msg.from.username
+	  msg.from.id
 	, render.date(msg.date * 1000)
 	, render.time(msg.date * 1000)
 	, msg.text
@@ -35,7 +35,7 @@ const parseCommand = (msg) => {
 	if (/^\/(?:a|abfahrt)/i.test(t))		return 'departures'
 	else if (/^\/(?:r|route)/i.test(t))		return 'routes'
 	else if (/^\/(?:n|nearby)/i.test(t))	return 'nearby'
-	else									return 'help'
+	else if (/^\/(?:h|help)/i.test(t))		return 'help'
 }
 
 
@@ -50,10 +50,13 @@ bot.on('message', so(function* (msg) {
 
 	let command = parseCommand(msg)
 	if (command) {
+		yield ctx.done()
 		yield ctx.set('command', command)
 		command = commands[command]
 	} else
 		command = commands[yield ctx.get('command')]
+
+	if (!command) command = commands.help
 
 	try { yield command(ctx, msg) }
 	catch (e) {
