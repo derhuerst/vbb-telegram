@@ -1,34 +1,24 @@
 'use strict'
 
 const config  = require('config')
-const Bot     = require('node-telegram-bot-api')
+const Api     = require('node-telegram-bot-api')
 const so      = require('so')
 
-const _       = require('./lib/index')
-const render  = require('./lib/render')
+const log = require('./lib/log')
+const namespace = require('./lib/namespace')
+const state = require('./lib/state')
 const context = require('./lib/context')
 
-const commands = {
-	  help:       require('./lib/help')
-	, departures: require('./lib/departures')
-	, routes:     require('./lib/routes')
-	, nearby:     require('./lib/nearby')
+const handlers = {
+	  help:       require('./commands/help')
+	, departures: require('./commands/departures')
+	, routes:     require('./commands/routes')
+	, nearby:     require('./commands/nearby')
 }
 
 
 
-const log = (msg) => console.info(
-	  msg.from.id
-	, render.date(msg.date * 1000)
-	, render.time(msg.date * 1000)
-	, msg.text
-		? msg.text
-	  	: msg.location
-	  		? msg.location.latitude + '|' + msg.location.latitude
-	  		: ''
-)
-
-const parseCommand = (msg) => {
+const parseCmd = (msg) => {
 	if ('string' !== typeof msg.text) return null
 	const t = msg.text.trim()
 	if (t[0] !== '/') return null
@@ -38,32 +28,36 @@ const parseCommand = (msg) => {
 	else if (/^\/(?:h|help)/i.test(t))		return 'help'
 }
 
-
-
-const token = config.telegramToken
-const bot = new Bot(token, {polling: true})
-
-bot.on('message', so(function* (msg) {
-	log(msg)
-	const id = msg.from ? msg.from.id : msg.chat.id
-	const ctx = context(bot, id)
-
-	let command = parseCommand(msg)
-	if (command) {
-		yield ctx.done()
-		yield ctx.set('command', command)
-		command = commands[command]
-	} else
-		command = commands[yield ctx.get('command')]
-
-	if (!command) command = commands.help
-
-	try { yield command(ctx, msg) }
-	catch (e) {
-		console.error(e.stack)
-		ctx.done()
-		ctx.keyboard(`\
+const error = `\
 *Oh snap! An error occured.*
-Report this to my creator @derhuerst to help making this bot better.`, ctx.keys)
+Report this to my creator @derhuerst to help making this bot better.`
+
+
+
+const api = new Api(config.telegramToken, {polling: true})
+
+api.on('message', so(function* (msg) {
+	log(msg)
+	const user = msg.from ? msg.from.id : msg.chat.id
+
+	const data = namespace(user, 'data')
+	const command = state(user, 'cmd')
+	const ctx = context(api, user)
+
+	let parsed = parseCmd(msg), handler
+	if (parsed) {
+		yield command.set(parsed)
+		yield data.clear()
+		handler = handlers[parsed]
+	} else handler = handlers[yield command()]
+
+	if (!handler) handler = handlers.help
+
+	try {
+		yield handler(ctx, data, msg)
+	} catch (e) {
+		console.error(e.stack)
+		data.clear()
+		ctx.keyboard(error, ctx.commands)
 	}
 }))
