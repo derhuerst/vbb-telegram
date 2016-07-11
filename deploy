@@ -11,4 +11,5 @@ cd ~/vbb-telegram
 npm i
 export NODE_ENV=production
 forever stop vbb-telegram
+redis-cli flushdb
 forever start -a --uid vbb-telegram index.js"
