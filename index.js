@@ -6,8 +6,9 @@ const so      = require('so')
 
 const log = require('./lib/log')
 const namespace = require('./lib/namespace')
-const state = require('./lib/state')
 const context = require('./lib/context')
+const storage = require('./lib/storage')
+const state = require('./lib/state')
 
 const handlers = {
 	  help:       require('./commands/help')
@@ -32,32 +33,42 @@ const error = `\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`
 
-
-
 const api = new Api(config.telegramToken, {polling: true})
-
 api.on('message', so(function* (msg) {
 	log(msg)
 	const user = msg.from ? msg.from.id : msg.chat.id
 
-	const data = namespace(user, 'data')
-	const command = state(user, 'cmd')
+	const ns = namespace(storage, user)
+	const cmd = state(ns, 'cmd')
+
+	const previousCmd = yield cmd()
+	const parsedCmd = parseCmd(msg)
+	let command, newThread = false
+
+	if (parsedCmd) {
+		command = parsedCmd
+		if (parsedCmd !== previousCmd) yield cmd.set(command)
+		if (parsedCmd) newThread = true
+	} else {
+		if (previousCmd) command = previousCmd
+		else {
+			command = 'help'
+			newThread = true
+			yield cmd.set(command)
+		}
+	}
+
+	const keep = namespace(ns, command + ':keep')
+	const tmp = namespace(ns, command + ':tmp')
+	if (parsedCmd) yield tmp.clear()
 	const ctx = context(api, user)
 
-	let parsed = parseCmd(msg), handler
-	if (parsed) {
-		yield command.set(parsed)
-		yield data.clear()
-		handler = handlers[parsed]
-	} else handler = handlers[yield command()]
-
-	if (!handler) handler = handlers.help
-
 	try {
-		yield handler(ctx, data, msg)
+		yield handlers[command](ctx, newThread, keep, tmp, msg)
 	} catch (e) {
 		console.error(e.stack)
-		data.clear()
+		yield tmp.clear()
+		yield cmd.set(null)
 		ctx.keyboard(error, ctx.commands)
 	}
 }))
