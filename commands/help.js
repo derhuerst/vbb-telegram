@@ -11,6 +11,6 @@ When specifying time, you can use the following formats:
 - \`in 10min\`
 - \`tomorrow 17:20\`
 - \`8 pm\`
-- \`tuesday at 6\``, ctx.keys)
+- \`tuesday at 6\``, ctx.commands)
 
 module.exports = help
