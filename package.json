@@ -26,6 +26,9 @@
 		"parse-messy-time":          "^2.0.2",
 		"vbb-find-station": "^0.2"
 	},
+	"peerDependencies": {
+		"forever": "^0.15"
+	},
 	"scripts": {
 		"start":   "node index.js",
 		"deploy":  "./deploy",
