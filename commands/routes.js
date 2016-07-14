@@ -22,6 +22,8 @@ Please enter a location like "U mehringdamm", "Kaiserdamm 26" or send your locat
 const promptWhen = `\
 *When?*
 e.g. "now", "in 10 minutes" or "tomorrow 17:20"`
+const whenButtons = [{text: 'now'}, {text: 'in 10 min'}, {text: 'in 1h'}]
+
 const promptDestination = `\
 *Where do you want to go?*`
 const promptOrigin = `\
@@ -85,7 +87,7 @@ const routes = so(function* (ctx, newThread, keep, tmp, msg) {
 	else if (state === 'destination') {
 		yield where('destination', ctx, tmp, freq, msg)
 		yield tmp.set('state', 'when')
-		yield ctx.message(promptWhen)
+		yield ctx.keyboard(promptWhen, whenButtons)
 	}
 	else if (state === 'origin') {
 		yield where('origin', ctx, tmp, freq, msg)

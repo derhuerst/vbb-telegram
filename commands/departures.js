@@ -15,9 +15,12 @@ I don't know about this station, please double-check for typos.
 If you're sure it's my fault, please let my creator @derhuerst know.`
 
 const textOnly = `Please enter text, other stuff is not supported yet.`
+
 const promptWhen = `\
 *When?*
 e.g. "now", "in 10 minutes" or "tomorrow 17:20"`
+const whenButtons = [{text: 'now'}, {text: 'in 10 min'}, {text: 'in 1h'}]
+
 const promptWhere = `\
 *Which station?*
 Enter a station name like "u mehringdamm" or "Kotti".`
@@ -54,7 +57,7 @@ const where = so(function* (ctx, tmp, freq, msg) {
 	yield tmp.set('station', station.__proto__)
 	yield freq.inc(station.id, station.name)
 
-	yield ctx.message(promptWhen)
+	yield ctx.keyboard(promptWhen, whenButtons)
 })
 
 
