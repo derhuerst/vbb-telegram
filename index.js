@@ -1,6 +1,6 @@
 'use strict'
 
-const config  = require('config')
+const cfg = require('config')
 const Api     = require('node-telegram-bot-api')
 const so      = require('so')
 
@@ -33,7 +33,19 @@ const error = `\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`
 
-const api = new Api(config.telegramToken, {webHook: config.ssl})
+const api = new Api(cfg.telegramToken, cfg.webhook
+	? {webHook: {
+		cert: cfg.webhook.cert,
+		key:  cfg.webhook.key,
+		port: cfg.webhook.port
+	}}
+	: {polling: true}
+)
+if (cfg.webhook) api.setWebHook([
+	cfg.webhook.hostname, ':', cfg.webhook.port,
+	'/bot', + cfg.telegramToken
+].join(''), cfg.webhook.cert)
+
 api.on('message', so(function* (msg) {
 	log(msg)
 	const user = msg.from ? msg.from.id : msg.chat.id

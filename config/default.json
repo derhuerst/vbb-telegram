@@ -2,8 +2,10 @@
 	"telegramToken": "<your Telegram bot token>",
 	"vbbKey":        "<your VBB api key>",
 	"timezone":      "Europe/Berlin",
-	"ssl": {
+	"webhook": {
 		"cert":      "<SSL certificate>",
-		"key":       "<SSL private key>"
+		"key":       "<SSL private key>",
+		"port":      8443,
+		"hostname":  "<publicly available host>"
 	}
 }
