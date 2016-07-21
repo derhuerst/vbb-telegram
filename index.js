@@ -33,7 +33,7 @@ const error = `\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`
 
-const api = new Api(config.telegramToken, {polling: true})
+const api = new Api(config.telegramToken, {webHook: config.ssl})
 api.on('message', so(function* (msg) {
 	log(msg)
 	const user = msg.from ? msg.from.id : msg.chat.id

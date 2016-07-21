@@ -1,5 +1,9 @@
 {
 	"telegramToken": "<your Telegram bot token>",
 	"vbbKey":        "<your VBB api key>",
-	"timezone":      "Europe/Berlin"
+	"timezone":      "Europe/Berlin",
+	"ssl": {
+		"cert":      "<SSL certificate>",
+		"key":       "<SSL private key>"
+	}
 }
