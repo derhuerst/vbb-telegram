@@ -74,8 +74,15 @@ const departures = so(function* (ctx, newThread, keep, tmp, msg) {
 		yield where(ctx, tmp, freq, msg)
 		yield tmp.set('state', 'when')
 	} else {
-		yield start(ctx, tmp, freq, msg)
-		yield tmp.set('state', 'where')
+		const arg = msg.text.match(/\/\w+\s+(.+)/i)
+		if (arg && arg[1]) { // station passed directly (e.g. '/a spichernstr')
+			console.log('foo', arg[1])
+			yield where(ctx, tmp, freq, {text: arg[1]})
+			yield tmp.set('state', 'when')
+		} else {
+			yield start(ctx, tmp, freq, msg)
+			yield tmp.set('state', 'where')
+		}
 	}
 })
 

@@ -21,9 +21,15 @@ const location = so(function* (ctx, msg) {
 	yield ctx.typing()
 	const closest = yield api.closest(lat, long, 3)
 
+	const buttons = [
+		{text: '/h\u2063 back to start'}
+	].concat(closest.map((station) => ({
+		text: `/a ${station.name}\u2063– departures`
+	})))
+
 	for (let station of closest) {
 		yield ctx.location(station.latitude, station.longitude)
-		yield ctx.keyboard(render.nearby(station), ctx.commands)
+		yield ctx.keyboard(render.nearby(station), buttons)
 	}
 })
 

@@ -11,6 +11,8 @@ When specifying time, you can use the following formats:
 - \`in 10min\`
 - \`tomorrow 17:20\`
 - \`8 pm\`
-- \`tuesday at 6\``, ctx.commands)
+- \`tuesday at 6\`
+
+The data behind this bot is from VBB, so departures & routing will be just as (in)accurate as in the BVG & VBB apps.`, ctx.commands)
 
 module.exports = help
