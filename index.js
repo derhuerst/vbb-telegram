@@ -63,6 +63,12 @@ api.on('message', so(function* (msg) {
 	if (parsedCmd) yield tmp.clear()
 	const ctx = context(api, user)
 
+	// remove comments
+	// Unforunately, Telegram keyboard buttons can only contain one value, which is used for both a caption and as the value inserted when those buttons are pressed. Two values (a value and a caption) would be a lot more flexbible.
+	// This bot circumvents this limitation by ignoring everything after the Unicode 'INVISIBLE SEPARATOR' character, which allows nice captions and parsability at the same time.
+	if (msg.text && msg.text.indexOf('\u2063') >= 0)
+		msg.text = msg.text.split('\u2063')[0]
+
 	try {
 		yield handlers[command](ctx, newThread, keep, tmp, msg)
 	} catch (e) {
