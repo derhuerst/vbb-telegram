@@ -11,20 +11,20 @@
 	"license":     "ISC",
 	"engines":     {"node": ">=6"},
 	"dependencies": {
-		"config":                    "^1.20.1",
+		"config": "^1.21",
 		"node-telegram-bot-api":     "^0.23.3",
-		"vbb-client": "^0.3.6",
-		"ioredis": "^2.2",
+		"vbb-client": "^0.4",
+		"ioredis": "^2.3",
 		"shorthash": "^0.0.2",
 		"ms":                        "^0.7.1",
-		"vbb-lines-at": "^1.1",
+		"vbb-lines-at": "^1.2",
 		"columnify":                 "^1.5.4",
-		"moment":                    "^2.13",
-		"moment-timezone":           "^0.5.4",
+		"moment": "^2.14.1",
+		"moment-timezone": "^0.5.5",
 		"vbb-short-station-name":    "^0.1",
 		"so":                        "^1.0.1",
-		"parse-messy-time":          "^2.0.2",
-		"vbb-find-station": "^0.3"
+		"parse-messy-time": "^2.1",
+		"vbb-find-station": "^0.4"
 	},
 	"peerDependencies": {
 		"forever": "^0.15"
