@@ -19,8 +19,8 @@
 		"ms":                        "^0.7.1",
 		"vbb-lines-at": "^1.2",
 		"columnify":                 "^1.5.4",
-		"moment": "^2.14.1",
-		"moment-timezone": "^0.5.5",
+		"moment": "^2.16",
+		"moment-timezone": "^0.5.9",
 		"vbb-short-station-name":    "^0.1",
 		"so":                        "^1.0.1",
 		"parse-messy-time": "^2.1",
@@ -32,6 +32,6 @@
 	"scripts": {
 		"start":   "node index.js",
 		"deploy":  "./deploy",
-		"ssh":     "ssh -i ./.scaleway root@vbb-telegram.jannisr.de"
+		"ssh":     "ssh root@vbb-telegram.jannisr.de"
 	}
 }

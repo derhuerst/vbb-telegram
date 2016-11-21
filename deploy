@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # upload files
-rsync -rav --delete -e 'ssh -i ./.scaleway' \
+rsync -rav --delete \
 	--exclude '.*' \
 	--exclude node_modules \
 	. root@vbb-telegram.jannisr.de:~/vbb-telegram/
