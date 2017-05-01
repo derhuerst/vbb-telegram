@@ -1,6 +1,5 @@
 'use strict'
 
-const config  = require('config')
 const Api     = require('node-telegram-bot-api')
 const so      = require('so')
 
@@ -15,6 +14,12 @@ const handlers = {
 	, departures: require('./commands/departures')
 	, routes:     require('./commands/routes')
 	, nearby:     require('./commands/nearby')
+}
+
+const TOKEN = process.env.TOKEN
+if (!TOKEN) {
+	console.error('Missing TOKEN env var.')
+	process.exit(1)
 }
 
 
@@ -33,7 +38,7 @@ const error = `\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`
 
-const api = new Api(config.telegramToken, {polling: true})
+const api = new Api(TOKEN, {polling: true})
 api.on('message', so(function* (msg) {
 	log(msg)
 	const user = msg.from ? msg.from.id : msg.chat.id
