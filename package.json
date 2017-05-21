@@ -22,10 +22,7 @@
 		"moment-timezone": "^0.5.9",
 		"so":                        "^1.0.1",
 		"parse-messy-time": "^2.1",
-		"vbb-find-station": "^0.4"
-	},
-	"peerDependencies": {
-		"forever": "^0.15"
+		"vbb-stations-autocomplete": "^2.3.0"
 	},
 	"scripts": {
 		"start":   "node index.js",

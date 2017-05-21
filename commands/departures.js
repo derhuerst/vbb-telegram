@@ -2,7 +2,7 @@
 
 const so     = require('so')
 const time   = require('parse-messy-time')
-const search = require('vbb-find-station')
+const search = require('vbb-stations-autocomplete')
 
 const api = require('../lib/api')
 const render = require('../lib/render')
@@ -51,7 +51,7 @@ const when = so(function* (ctx, tmp, freq, msg) {
 
 const where = so(function* (ctx, tmp, freq, msg) {
 	ctx.typing()
-	const station = yield search(msg.text)
+	const [station] = search(msg.text, 1, true, false)
 	if (!station) return ctx.message(unknownStation)
 
 	yield tmp.set('station', station)
