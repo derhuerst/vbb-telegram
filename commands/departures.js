@@ -54,7 +54,7 @@ const where = so(function* (ctx, tmp, freq, msg) {
 	const station = yield search(msg.text)
 	if (!station) return ctx.message(unknownStation)
 
-	yield tmp.set('station', station.__proto__)
+	yield tmp.set('station', station)
 	yield freq.inc(station.id, station.name)
 
 	yield ctx.keyboard(promptWhen, whenButtons)

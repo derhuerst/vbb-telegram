@@ -28,7 +28,7 @@ const location = so(function* (ctx, msg) {
 	})))
 
 	for (let station of closest) {
-		yield ctx.location(station.latitude, station.longitude)
+		yield ctx.location(station.coordinates.latitude, station.coordinates.longitude)
 		yield ctx.keyboard(render.nearby(station), buttons)
 	}
 })
