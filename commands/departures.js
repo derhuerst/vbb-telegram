@@ -16,8 +16,8 @@ If you're sure it's my fault, please let my creator @derhuerst know.`
 
 const textOnly = `Please enter text, other stuff is not supported yet.`
 
-const promptWhen = `\
-*When?*
+const promptWhen = (s) => `\
+I found ${s.name}. *When?*
 e.g. "now", "in 10 minutes" or "tomorrow 17:20"`
 const whenButtons = [{text: 'now'}, {text: 'in 10 min'}, {text: 'in 1h'}]
 
@@ -57,7 +57,7 @@ const where = so(function* (ctx, tmp, freq, msg) {
 	yield tmp.set('station', station)
 	yield freq.inc(station.id, station.name)
 
-	yield ctx.keyboard(promptWhen, whenButtons)
+	yield ctx.keyboard(promptWhen(station), whenButtons)
 })
 
 
@@ -76,7 +76,6 @@ const departures = so(function* (ctx, newThread, keep, tmp, msg) {
 	} else {
 		const arg = msg.text.match(/\/\w+\s+(.+)/i)
 		if (arg && arg[1]) { // station passed directly (e.g. '/a spichernstr')
-			console.log('foo', arg[1])
 			yield where(ctx, tmp, freq, {text: arg[1]})
 			yield tmp.set('state', 'when')
 		} else {

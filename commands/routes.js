@@ -16,6 +16,9 @@ const unknownLocation = `\
 I don't know about this location, please double-check for typos.
 If you're sure it's my fault, please let my creator @derhuerst know.`
 
+const foundLocation = (l) => `\
+I found ${l.name}.`
+
 const textOrLocation = `\
 Please enter a location like "U mehringdamm", "Kaiserdamm 26" or send your location.`
 
@@ -58,6 +61,7 @@ const where = so(function* (key, ctx, data, freq, msg) {
 	if (msg.text) {
 		location = yield api.location(msg.text)
 		if (!location) return ctx.message(unknownLocation)
+		else ctx.message(foundLocation(location))
 
 		const id = location.id || hash(location.name)
 		freq.inc(id, location.name)
