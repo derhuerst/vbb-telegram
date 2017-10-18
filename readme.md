@@ -15,7 +15,7 @@
 [Redis](http://redis.io/) needs to be running.
 
 ```bash
-git clone https://github.com/derhuers/vbb-telegram.git; cd vbb-telegram
+git clone https://github.com/derhuerst/vbb-telegram.git; cd vbb-telegram
 npm install
 export NODE_ENV=dev # or `production`
 npm start
