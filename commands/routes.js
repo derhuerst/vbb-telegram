@@ -1,6 +1,5 @@
 'use strict'
 
-const so     = require('so')
 const time   = require('parse-messy-time')
 const hash = require('shorthash').unique
 
@@ -35,17 +34,17 @@ Enter a location like "U mehringdamm", "Kaiserdamm 26" or send your location.`
 
 
 
-const when = so(function* (ctx, data, msg) {
+const when = async (ctx, data, msg) => {
 	if (!msg.text) return ctx.message(textOnly)
 	const when = time(msg.text)
 
-	const from = yield data.get('origin')
-	const to = yield data.get('destination')
+	const from = await data.get('origin')
+	const to = await data.get('destination')
 	ctx.typing()
-	const routes = yield api.routes(from, to, when)
+	const routes = await api.routes(from, to, when)
 
-	yield ctx.keyboard(render.routes(routes), ctx.commands)
-})
+	await ctx.keyboard(render.routes(routes), ctx.commands)
+}
 
 
 
@@ -55,11 +54,11 @@ const currentLocation = (msg) => ({
 	longitude: msg.location.longitude
 })
 
-const where = so(function* (key, ctx, data, freq, msg) {
+const where = async (key, ctx, data, freq, msg) => {
 	ctx.typing()
 	let location
 	if (msg.text) {
-		location = yield api.location(msg.text)
+		location = await api.location(msg.text)
 		if (!location) return ctx.message(unknownLocation)
 		else ctx.message(foundLocation(location))
 
@@ -68,40 +67,40 @@ const where = so(function* (key, ctx, data, freq, msg) {
 
 	} else if (msg.location) location = currentLocation(msg)
 	else return ctx.message(textOrLocation)
-	yield data.set(key, location)
-})
+	await data.set(key, location)
+}
 
 
 
 const requestLocation = [{text: 'send location', request_location: true}]
-const frequentLocations = so(function* (freq) {
-	let locations = yield freq(3)
+const frequentLocations = async (freq) => {
+	let locations = await freq(3)
 	locations = locations.map((text) => ({text}))
 	return locations.concat(requestLocation)
-})
+}
 
-const routes = so(function* (ctx, newThread, keep, tmp, msg) {
+const routes = async (ctx, newThread, keep, tmp, msg) => {
 	const freq = frequent(keep, 'freq')
 
-	const state = yield tmp.get('state')
+	const state = await tmp.get('state')
 	if (state === 'when') {
-		yield when(ctx, tmp, msg)
-		yield tmp.clear()
+		await when(ctx, tmp, msg)
+		await tmp.clear()
 	}
 	else if (state === 'destination') {
-		yield where('destination', ctx, tmp, freq, msg)
-		yield tmp.set('state', 'when')
-		yield ctx.keyboard(promptWhen, whenButtons)
+		await where('destination', ctx, tmp, freq, msg)
+		await tmp.set('state', 'when')
+		await ctx.keyboard(promptWhen, whenButtons)
 	}
 	else if (state === 'origin') {
-		yield where('origin', ctx, tmp, freq, msg)
-		yield tmp.set('state', 'destination')
-		yield ctx.keyboard(promptDestination, yield frequentLocations(freq))
+		await where('origin', ctx, tmp, freq, msg)
+		await tmp.set('state', 'destination')
+		await ctx.keyboard(promptDestination, await frequentLocations(freq))
 	}
 	else {
-		yield tmp.set('state', 'origin')
-		yield ctx.keyboard(promptOrigin, yield frequentLocations(freq))
+		await tmp.set('state', 'origin')
+		await ctx.keyboard(promptOrigin, await frequentLocations(freq))
 	}
-})
+}
 
 module.exports = routes

@@ -1,7 +1,6 @@
 'use strict'
 
 const Api     = require('node-telegram-bot-api')
-const so      = require('so')
 
 const log = require('./lib/log')
 const namespace = require('./lib/namespace')
@@ -39,33 +38,33 @@ const error = `\
 Report this to my creator @derhuerst to help making this bot better.`
 
 const api = new Api(TOKEN, {polling: true})
-api.on('message', so(function* (msg) {
+api.on('message', async (msg) => {
 	log(msg)
 	const user = msg.from ? msg.from.id : msg.chat.id
 
 	const ns = namespace(storage, user)
 	const cmd = state(ns, 'cmd')
 
-	const previousCmd = yield cmd()
+	const previousCmd = await cmd()
 	const parsedCmd = parseCmd(msg)
 	let command, newThread = false
 
 	if (parsedCmd) {
 		command = parsedCmd
-		if (parsedCmd !== previousCmd) yield cmd.set(command)
+		if (parsedCmd !== previousCmd) await cmd.set(command)
 		if (parsedCmd) newThread = true
 	} else {
 		if (previousCmd) command = previousCmd
 		else {
 			command = 'help'
 			newThread = true
-			yield cmd.set(command)
+			await cmd.set(command)
 		}
 	}
 
 	const keep = namespace(ns, command + ':keep')
 	const tmp = namespace(ns, command + ':tmp')
-	if (parsedCmd) yield tmp.clear()
+	if (parsedCmd) await tmp.clear()
 	const ctx = context(api, user)
 
 	// remove comments
@@ -75,11 +74,11 @@ api.on('message', so(function* (msg) {
 		msg.text = msg.text.split('\u2063')[0]
 
 	try {
-		yield handlers[command](ctx, newThread, keep, tmp, msg)
+		await handlers[command](ctx, newThread, keep, tmp, msg)
 	} catch (e) {
 		console.error(e.stack)
-		yield tmp.clear()
-		yield cmd.set(null)
+		await tmp.clear()
+		await cmd.set(null)
 		ctx.keyboard(error, ctx.commands)
 	}
-}))
+})

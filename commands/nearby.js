@@ -1,7 +1,5 @@
 'use strict'
 
-const so     = require('so')
-
 const api = require('../lib/api')
 const render = require('../lib/render')
 
@@ -13,13 +11,13 @@ const promptLocation = `Please share your location with me.`
 
 
 
-const location = so(function* (ctx, msg) {
+const location = async (ctx, msg) => {
 	if (!msg.location) return ctx.message(locationOnly)
 
 	const lat  = msg.location.latitude
 	const long = msg.location.longitude
-	yield ctx.typing()
-	const closest = yield api.closest(lat, long, 3)
+	await ctx.typing()
+	const closest = await api.closest(lat, long, 3)
 
 	const buttons = [
 		{text: '/h\u2063 back to start'}
@@ -28,22 +26,22 @@ const location = so(function* (ctx, msg) {
 	})))
 
 	for (let station of closest) {
-		yield ctx.location(station.coordinates.latitude, station.coordinates.longitude)
-		yield ctx.keyboard(render.nearby(station), buttons)
+		await ctx.location(station.coordinates.latitude, station.coordinates.longitude)
+		await ctx.keyboard(render.nearby(station), buttons)
 	}
-})
+}
 
 
 
-const nearby = so(function* (ctx, newThread, keep, tmp, msg) {
-	const state = yield tmp.get('state')
+const nearby = async (ctx, newThread, keep, tmp, msg) => {
+	const state = await tmp.get('state')
 	if (state === 'location') {
-		yield location(ctx, msg)
-		yield tmp.clear()
+		await location(ctx, msg)
+		await tmp.clear()
 	} else {
-		yield tmp.set('state', 'location')
-		yield ctx.requestLocation(promptLocation, 'send location')
+		await tmp.set('state', 'location')
+		await ctx.requestLocation(promptLocation, 'send location')
 	}
-})
+}
 
 module.exports = nearby

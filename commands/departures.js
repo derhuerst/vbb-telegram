@@ -1,6 +1,5 @@
 'use strict'
 
-const so     = require('so')
 const time   = require('parse-messy-time')
 const search = require('vbb-stations-autocomplete')
 
@@ -27,62 +26,62 @@ Enter a station name like "u mehringdamm" or "Kotti".`
 
 
 
-const start = so(function* (ctx, tmp, freq, msg) {
-	let stations = yield freq(3)
-	if (stations.length === 0) yield ctx.message(promptWhere)
+const start = async (ctx, tmp, freq, msg) => {
+	let stations = await freq(3)
+	if (stations.length === 0) await ctx.message(promptWhere)
 	else {
 		stations = stations.map((text) => ({text}))
-		yield ctx.keyboard(promptWhere, stations)
+		await ctx.keyboard(promptWhere, stations)
 	}
-})
+}
 
 
 
-const when = so(function* (ctx, tmp, freq, msg) {
+const when = async (ctx, tmp, freq, msg) => {
 	const when = time(msg.text)
-	const station = yield tmp.get('station')
+	const station = await tmp.get('station')
 
 	ctx.typing()
-	const deps = yield api.deps(station.id, when)
-	yield ctx.keyboard(render.deps(station, deps), ctx.commands)
-})
+	const deps = await api.deps(station.id, when)
+	await ctx.keyboard(render.deps(station, deps), ctx.commands)
+}
 
 
 
-const where = so(function* (ctx, tmp, freq, msg) {
+const where = async (ctx, tmp, freq, msg) => {
 	ctx.typing()
 	const [station] = search(msg.text, 1, true, false)
 	if (!station) return ctx.message(unknownStation)
 
-	yield tmp.set('station', station)
-	yield freq.inc(station.id, station.name)
+	await tmp.set('station', station)
+	await freq.inc(station.id, station.name)
 
-	yield ctx.keyboard(promptWhen(station), whenButtons)
-})
+	await ctx.keyboard(promptWhen(station), whenButtons)
+}
 
 
 
-const departures = so(function* (ctx, newThread, keep, tmp, msg) {
+const departures = async (ctx, newThread, keep, tmp, msg) => {
 	if (!msg.text) return ctx.message(textOnly)
 	const freq = frequent(keep, 'freq')
 
-	const state = yield tmp.get('state')
+	const state = await tmp.get('state')
 	if (state === 'when') {
-		yield when(ctx, tmp, freq, msg)
-		yield tmp.clear()
+		await when(ctx, tmp, freq, msg)
+		await tmp.clear()
 	} else if (state === 'where') {
-		yield where(ctx, tmp, freq, msg)
-		yield tmp.set('state', 'when')
+		await where(ctx, tmp, freq, msg)
+		await tmp.set('state', 'when')
 	} else {
 		const arg = msg.text.match(/\/\w+\s+(.+)/i)
 		if (arg && arg[1]) { // station passed directly (e.g. '/a spichernstr')
-			yield where(ctx, tmp, freq, {text: arg[1]})
-			yield tmp.set('state', 'when')
+			await where(ctx, tmp, freq, {text: arg[1]})
+			await tmp.set('state', 'when')
 		} else {
-			yield start(ctx, tmp, freq, msg)
-			yield tmp.set('state', 'where')
+			await start(ctx, tmp, freq, msg)
+			await tmp.set('state', 'where')
 		}
 	}
-})
+}
 
 module.exports = departures

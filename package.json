@@ -16,7 +16,7 @@
 	"repository": "git://github.com/derhuerst/vbb-telegram.git",
 	"license": "ISC",
 	"engines": {
-		"node": ">=6"
+		"node": ">=7.6"
 	},
 	"dependencies": {
 		"columnify": "^1.5.4",
@@ -27,7 +27,6 @@
 		"node-telegram-bot-api": "^0.29.0",
 		"parse-messy-time": "^2.1",
 		"shorthash": "^0.0.2",
-		"so": "^1.0.1",
 		"vbb-client": "^2.0.0",
 		"vbb-lines-at": "^3.2.0",
 		"vbb-stations-autocomplete": "^2.3.0"
