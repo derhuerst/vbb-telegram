@@ -3,12 +3,14 @@
 const time   = require('parse-messy-time')
 const search = require('vbb-stations-autocomplete')
 const getStations = require('vbb-stations')
+const splitLines = require('split-lines')
 
 const api = require('../lib/api')
 const render = require('../lib/render')
 const frequent = require('../lib/frequent')
 
-
+// https://core.telegram.org/method/messages.sendMessage#return-errors
+const SIZE_LIMIT = 4096
 
 const unknownStation = `\
 I don't know about this station, please double-check for typos.
@@ -44,7 +46,22 @@ const when = async (ctx, tmp, freq, msg) => {
 
 	ctx.typing()
 	const deps = await api.deps(station.id, when)
-	await ctx.keyboard(render.deps(station, deps), ctx.commands)
+	let rendered = render.deps(station, deps)
+	// This is a terrible fix.
+	//	- It makes assumptions about how the rendered response looks.
+	//	- It assumes that half of the message won't be too long.
+	// todo: properly fix this
+	if (rendered.length >= SIZE_LIMIT) {
+		rendered = splitLines(rendered)
+		const splitI = Math.ceil(rendered.length / 2)
+		const firstPart = rendered.slice(0, splitI).join('\n') + '\n```'
+		const secondPart = '```\n' + rendered.slice(splitI).join('\n')
+
+		await ctx.message(firstPart, ctx.commands)
+		await ctx.keyboard(secondPart, ctx.commands)
+	} else {
+		await ctx.keyboard(rendered, ctx.commands)
+	}
 }
 
 
