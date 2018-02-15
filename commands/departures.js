@@ -2,6 +2,7 @@
 
 const time   = require('parse-messy-time')
 const search = require('vbb-stations-autocomplete')
+const getStations = require('vbb-stations')
 
 const api = require('../lib/api')
 const render = require('../lib/render')
@@ -50,7 +51,8 @@ const when = async (ctx, tmp, freq, msg) => {
 
 const where = async (ctx, tmp, freq, msg) => {
 	ctx.typing()
-	const [station] = search(msg.text, 1, true, false)
+	let [station] = search(msg.text, 1, true, false)
+	station = station && getStations(station.id)[0]
 	if (!station) return ctx.message(unknownStation)
 
 	await tmp.set('station', station)

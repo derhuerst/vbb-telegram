@@ -26,7 +26,7 @@ const location = async (ctx, msg) => {
 	})))
 
 	for (let station of closest) {
-		await ctx.location(station.coordinates.latitude, station.coordinates.longitude)
+		await ctx.location(station.location.latitude, station.location.longitude)
 		await ctx.keyboard(render.nearby(station), buttons)
 	}
 }
