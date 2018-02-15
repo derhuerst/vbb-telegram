@@ -41,9 +41,9 @@ const when = async (ctx, data, msg) => {
 	const from = await data.get('origin')
 	const to = await data.get('destination')
 	ctx.typing()
-	const routes = await api.routes(from, to, when)
+	const journeys = await api.journeys(from, to, when)
 
-	await ctx.keyboard(render.routes(routes), ctx.commands)
+	await ctx.keyboard(render.journeys(journeys), ctx.commands)
 }
 
 
@@ -79,7 +79,7 @@ const frequentLocations = async (freq) => {
 	return locations.concat(requestLocation)
 }
 
-const routes = async (ctx, newThread, keep, tmp, msg) => {
+const journeys = async (ctx, newThread, keep, tmp, msg) => {
 	const freq = frequent(keep, 'freq')
 
 	const state = await tmp.get('state')
@@ -103,4 +103,4 @@ const routes = async (ctx, newThread, keep, tmp, msg) => {
 	}
 }
 
-module.exports = routes
+module.exports = journeys

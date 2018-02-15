@@ -11,7 +11,7 @@ const state = require('./lib/state')
 const handlers = {
 	  help:       require('./commands/help')
 	, departures: require('./commands/departures')
-	, routes:     require('./commands/routes')
+	, journeys: require('./commands/journeys')
 	, nearby:     require('./commands/nearby')
 }
 
@@ -28,7 +28,7 @@ const parseCmd = (msg) => {
 	const t = msg.text.trim()
 	if (t[0] !== '/') return null
 	if (/^\/(?:a|abfahrt)/i.test(t))		return 'departures'
-	else if (/^\/(?:r|route)/i.test(t))		return 'routes'
+	else if (/^\/(?:r|route)/i.test(t))		return 'journeys'
 	else if (/^\/(?:n|nearby)/i.test(t))	return 'nearby'
 	else if (/^\/(?:h|help)/i.test(t))		return 'help'
 }
