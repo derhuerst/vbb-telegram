@@ -25,6 +25,11 @@ if (!WEB_HOOK) {
 	console.error('Missing WEB_HOOK env var.')
 	process.exit(1)
 }
+const PORT = process.env.PORT
+if (!PORT) {
+	console.error('Missing PORT env var.')
+	process.exit(1)
+}
 
 const parseCmd = (msg) => {
 	if ('string' !== typeof msg.text) return null
@@ -43,7 +48,14 @@ Report this to my creator @derhuerst to help making this bot better.`
 let api
 if (process.env.NODE_ENV === 'production') {
 	console.info('using ' + WEB_HOOK + ' as web hook')
-	api = new Api(TOKEN, {polling: false})
+
+	const http = require('http')
+
+	const server = http.createServer()
+	api = new Api(TOKEN, {
+		polling: false,
+		webHook: {port: PORT}
+	})
 	api.setWebHook(WEB_HOOK)
 } else {
 	console.info('using polling')
