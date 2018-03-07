@@ -42,7 +42,7 @@ Report this to my creator @derhuerst to help making this bot better.`
 
 let api
 if (process.env.NODE_ENV === 'production') {
-	console.info('using web hooks at ' + HOSTNAME)
+	console.info('using ' + WEB_HOOK + ' as web hook')
 	api = new Api(TOKEN, {polling: false})
 	api.setWebHook(WEB_HOOK)
 } else {
