@@ -28,15 +28,13 @@ const bot = new Bot(TOKEN)
 bot.use(logging)
 bot.use(command)
 bot.use((ctx, next) => {
-	const {cmd, prevCmd} = ctx.state
+	if (!ctx.message) return next()
+	const cmd = ctx.state.cmd || ctx.state.prevCmd || 'help'
+	const handler = commands[cmd] || commands.help
 
-	let handler = commands.help
-	if (cmd) {
-		if (commands[cmd]) handler = commands[cmd]
-	} else if (prevCmd) {
-		if (commands[prevCmd]) handler = commands[prevCmd]
-	}
-
+	const chat = ctx.message.chat.id
+	ctx.getData = storage.createGetData(chat, cmd)
+	ctx.putData = storage.createPutData(chat, cmd)
 	return handler(ctx, next)
 })
 
