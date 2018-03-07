@@ -21,5 +21,7 @@
 		"node": ">=8"
 	},
 	"dependencies": {
+		"hifo": "^1.0.0",
+		"level": "^3.0.0"
 	}
 }
