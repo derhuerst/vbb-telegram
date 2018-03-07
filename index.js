@@ -20,10 +20,9 @@ if (!TOKEN) {
 	console.error('Missing TOKEN env var.')
 	process.exit(1)
 }
-
-const HOSTNAME = process.env.HOSTNAME
-if (!HOSTNAME) {
-	console.error('Missing HOSTNAME env var.')
+const WEB_HOOK = process.env.WEB_HOOK
+if (!WEB_HOOK) {
+	console.error('Missing WEB_HOOK env var.')
 	process.exit(1)
 }
 
@@ -45,9 +44,7 @@ let api
 if (process.env.NODE_ENV === 'production') {
 	console.info('using web hooks at ' + HOSTNAME)
 	api = new Api(TOKEN, {polling: false})
-	api.setWebHook(HOSTNAME, {
-		certificate: `/etc/letsencrypt/live/${HOSTNAME}/fullchain.pem`
-	})
+	api.setWebHook(WEB_HOOK)
 } else {
 	console.info('using polling')
 	api = new Api(TOKEN, {polling: true})
