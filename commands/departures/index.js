@@ -3,10 +3,12 @@
 const searchStations = require('vbb-stations-autocomplete')
 const getStations = require('vbb-stations')
 const parseTime = require('parse-messy-time')
+const linesAt = require('vbb-lines-at')
 const hafas = require('vbb-hafas')
 
-const commandKeys = require('../lib/commands-keyboard')
-const whenKeys = require('../lib/when-keyboard')
+const commandKeys = require('../../lib/commands-keyboard')
+const whenKeys = require('../../lib/when-keyboard')
+const renderDeps = require('./render')
 
 const promptWhen = `\
 *When?*
@@ -41,12 +43,7 @@ const parseWhen = async (when, ctx) => {
 	return when
 }
 
-const renderDeps = (deps, header) => {
-	// todo
-}
-
 const printDeps = async (allDeps, ctx) => {
-	await ctx.replyWithMarkdown(`todo`, commandKeys) // todo
 	for (let i = 0; i < allDeps.length; i += 10) {
 		const deps = allDeps.slice(i, i + 10)
 		await ctx.replyWithMarkdown(renderDeps(deps), commandKeys)
@@ -88,7 +85,11 @@ const departures = async (ctx, next) => {
 		ctx.putData('where', null)
 	])
 
-	// fetch & render
+	let lines = linesAt[where.id] || []
+	lines = lines.map(l => '`' + l.name + '`').join(', ')
+	await ctx.replyWithMarkdown('*' + where.name + '*\n' + lines)
+
+	// fetch & render deps
 	await ctx.replyWithChatAction('typing')
 	const deps = await hafas.departures(where.id, when)
 	await printDeps(deps, ctx)
