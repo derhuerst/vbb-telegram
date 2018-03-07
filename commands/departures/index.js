@@ -1,13 +1,15 @@
 'use strict'
 
 const searchStations = require('vbb-stations-autocomplete')
-const getStations = require('vbb-stations')
+const allStations = require('vbb-stations/simple')
 const parseTime = require('parse-messy-time')
 const linesAt = require('vbb-lines-at')
 const hafas = require('vbb-hafas')
 
+const storage = require('../../lib/storage')
 const commandKeys = require('../../lib/commands-keyboard')
 const whenKeys = require('../../lib/when-keyboard')
+const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
 const renderDeps = require('./render')
 
 const promptWhen = `\
@@ -27,7 +29,7 @@ const parseWhere = async (where, ctx) => {
 	await ctx.replyWithChatAction('typing')
 	let [station] = searchStations(where, 1, false, false) // non-fuzzy
 	if (!station) [station] = searchStations(where, 1, true, false) // fuzzy
-	if (station) [station] = getStations(station.id) // get details
+	if (station) station = allStations.find(s => s.id === station.id) // get details
 
 	if (station) await ctx.replyWithMarkdown(`I found ${station.name}.`)
 	else await ctx.replyWithMarkdown(unknownStation)
@@ -51,6 +53,8 @@ const printDeps = async (allDeps, ctx) => {
 }
 
 const departures = async (ctx, next) => {
+	const chat = ctx.message.chat.id
+
 	// `/a spichernstr` shorthand
 	if (ctx.state.args && ctx.state.args[0]) {
 		const station = await parseWhere(ctx.state.args[0], ctx)
@@ -58,7 +62,8 @@ const departures = async (ctx, next) => {
 		return next()
 	}
 	if (ctx.state.cmd) {
-		await ctx.replyWithMarkdown(promptWhere) // todo: frequent keyboard
+		const ids = await storage.getTopLocations(chat)
+		await ctx.replyWithMarkdown(promptWhere, getFrequentStationsKeys(ids))
 		return next() // await next message
 	}
 
@@ -67,6 +72,7 @@ const departures = async (ctx, next) => {
 		where = await parseWhere(ctx.message.text, ctx)
 		if (!where) return next() // await next message
 		await ctx.putData('where', where)
+		await storage.incLocation(chat, where.id)
 
 		await ctx.replyWithMarkdown(promptWhen, whenKeys)
 		return next() // await next message
