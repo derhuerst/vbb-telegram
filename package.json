@@ -22,6 +22,8 @@
 	},
 	"dependencies": {
 		"hifo": "^1.0.0",
-		"level": "^3.0.0"
+		"js-string-escape": "^1.0.1",
+		"level": "^3.0.0",
+		"telegraf": "^3.19.0"
 	}
 }
