@@ -21,7 +21,11 @@ if (!TOKEN) {
 	process.exit(1)
 }
 
-
+const HOSTNAME = process.env.HOSTNAME
+if (!HOSTNAME) {
+	console.error('Missing HOSTNAME env var.')
+	process.exit(1)
+}
 
 const parseCmd = (msg) => {
 	if ('string' !== typeof msg.text) return null
@@ -37,7 +41,18 @@ const error = `\
 *Oh snap! An error occured.*
 Report this to my creator @derhuerst to help making this bot better.`
 
-const api = new Api(TOKEN, {polling: true})
+let api
+if (process.env.NODE_ENV === 'production') {
+	console.info('using web hooks at ' + HOSTNAME)
+	api = new Api(TOKEN, {polling: false})
+	api.setWebHook(HOSTNAME, {
+		certificate: `/etc/letsencrypt/live/${HOSTNAME}/fullchain.pem`
+	})
+} else {
+	console.info('using polling')
+	api = new Api(TOKEN, {polling: true})
+}
+
 api.on('message', async (msg) => {
 	log(msg)
 	const user = msg.from ? msg.from.id : msg.chat.id
