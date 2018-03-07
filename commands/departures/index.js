@@ -6,7 +6,6 @@ const parseTime = require('parse-messy-time')
 const linesAt = require('vbb-lines-at')
 const hafas = require('vbb-hafas')
 
-const storage = require('../../lib/storage')
 const commandKeys = require('../../lib/commands-keyboard')
 const whenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
@@ -53,42 +52,40 @@ const printDeps = async (allDeps, ctx) => {
 }
 
 const departures = async (ctx, next) => {
-	const chat = ctx.message.chat.id
-
 	// `/a spichernstr` shorthand
-	if (ctx.state.args && ctx.state.args[0]) {
-		const station = await parseWhere(ctx.state.args[0], ctx)
-		if (station) await ctx.putData('where', station)
+	if (ctx.args && ctx.args[0]) {
+		const station = await parseWhere(ctx.args[0], ctx)
+		if (station) await ctx.storage.putData('where', station)
 		return next()
 	}
-	if (ctx.state.cmd) {
-		const ids = await storage.getTopLocations(chat)
+	if (ctx.command) {
+		const ids = await ctx.storage.getTopLocations()
 		await ctx.replyWithMarkdown(promptWhere, getFrequentStationsKeys(ids))
 		return next() // await next message
 	}
 
-	let where = await ctx.getData('where')
+	let where = await ctx.storage.getData('where')
 	if (!where) {
 		where = await parseWhere(ctx.message.text, ctx)
 		if (!where) return next() // await next message
-		await ctx.putData('where', where)
-		await storage.incLocation(chat, where.id)
+		await ctx.storage.putData('where', where)
+		await ctx.storage.incLocation(where.id)
 
 		await ctx.replyWithMarkdown(promptWhen, whenKeys)
 		return next() // await next message
 	}
 
-	let when = await ctx.getData('when')
+	let when = await ctx.storage.getData('when')
 	if (!when) {
 		when = await parseWhen(ctx.message.text, ctx)
 		if (!when) return next() // await next message
-		await ctx.putData('when', when)
+		await ctx.storage.putData('when', when)
 	}
 
 	// clear session data
 	await Promise.all([
-		ctx.putData('when', null),
-		ctx.putData('where', null)
+		ctx.storage.putData('when', null),
+		ctx.storage.putData('where', null)
 	])
 
 	let lines = linesAt[where.id] || []

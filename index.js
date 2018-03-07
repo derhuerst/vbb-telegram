@@ -1,8 +1,10 @@
 'use strict'
 
+const path = require('path')
 const Bot = require('telegraf')
 
 const logging = require('./lib/logging')
+const session = require('./lib/session')
 const storage = require('./lib/storage')
 const command = require('./lib/command')
 
@@ -24,17 +26,19 @@ if (!TOKEN) {
 	process.exit(1)
 }
 
+const pathToDb = path.join(__dirname, 'vbb-telegram.ldb')
+
 const bot = new Bot(TOKEN)
 bot.use(logging)
+bot.use(session(pathToDb))
 bot.use(command)
+bot.use(storage)
 bot.use((ctx, next) => {
 	if (!ctx.message) return next()
-	const cmd = ctx.state.cmd || ctx.state.prevCmd || 'help'
+	const cmd = ctx.command || ctx.prevCommand || 'help'
+	ctx.storage.getData = ctx.storage.createGetData(cmd)
+	ctx.storage.putData = ctx.storage.createPutData(cmd)
 	const handler = commands[cmd] || commands.help
-
-	const chat = ctx.message.chat.id
-	ctx.getData = storage.createGetData(chat, cmd)
-	ctx.putData = storage.createPutData(chat, cmd)
 	return handler(ctx, next)
 })
 
