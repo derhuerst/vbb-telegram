@@ -1,10 +1,11 @@
 'use strict'
 
+const searchStations = require('vbb-stations-autocomplete')
+const allStations = require('vbb-stations/simple')
 const parseTime = require('parse-messy-time')
 const Markup = require('telegraf/markup')
 const hafas = require('vbb-hafas')
 
-const findStation = require('../../lib/find-station')
 const commandKeys = require('../../lib/commands-keyboard')
 const whenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
@@ -21,12 +22,31 @@ const promptOrigin = `\
 Enter a location like "U mehringdamm", "Kaiserdamm 26" or send your location.`
 const promptDest = `\
 *Where do you want to go?*`
-// const unknownStation = `\
-// I don't know about this station, please double-check for typos.
-// If you're sure it's my fault, please let my creator @derhuerst know.`
+const unknownStation = `\
+I don't know about this station, please double-check for typos.
+If you're sure it's my fault, please let my creator @derhuerst know.`
+const textOrLocation = `\
+Only location names like "U mehringdamm", "Kaiserdamm 26" and locations are supported.`
 
-const parseWhere = async (where, ctx) => {
-	// todo
+const parseWhere = async (msg, ctx) => {
+	if (msg.text) {
+		let [loc] = searchStations(msg.text, 1, false, false) // non-fuzzy
+		if (loc) {
+			loc = allStations.find(s => s.id === loc.id) // get details
+		} else {
+			[loc] = await hafas.locations(msg.text, {results: 1})
+		}
+		const text = loc ? `I found ${loc.name || loc.address}.` : unknownStation
+		await ctx.replyWithMarkdown(text)
+		return loc
+	} else if (msg.location) {
+		return {
+			type: 'location',
+			address: 'current location',
+			latitude: msg.location.latitude,
+			longitude: msg.location.longitude
+		}
+	} else ctx.replyWithMarkdown(textOrLocation)
 }
 
 const parseWhen = async (when, ctx) => {

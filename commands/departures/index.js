@@ -1,10 +1,11 @@
 'use strict'
 
+const searchStations = require('vbb-stations-autocomplete')
+const allStations = require('vbb-stations/simple')
 const parseTime = require('parse-messy-time')
 const linesAt = require('vbb-lines-at')
 const hafas = require('vbb-hafas')
 
-const findStation = require('../../lib/find-station')
 const commandKeys = require('../../lib/commands-keyboard')
 const whenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
@@ -22,6 +23,13 @@ Enter a station name like "u mehringdamm" or "Kotti".`
 const unknownStation = `\
 I don't know about this station, please double-check for typos.
 If you're sure it's my fault, please let my creator @derhuerst know.`
+
+const findStation = (name) => {
+	let [station] = searchStations(name, 1, false, false) // non-fuzzy
+	if (!station) [station] = searchStations(name, 1, true, false) // fuzzy
+	if (station) station = allStations.find(s => s.id === station.id) // get details
+	return station
+}
 
 const parseWhere = async (where, ctx) => {
 	const station = findStation(where)
