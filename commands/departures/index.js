@@ -1,11 +1,10 @@
 'use strict'
 
-const searchStations = require('vbb-stations-autocomplete')
-const allStations = require('vbb-stations/simple')
 const parseTime = require('parse-messy-time')
 const linesAt = require('vbb-lines-at')
 const hafas = require('vbb-hafas')
 
+const findStation = require('../../lib/find-station')
 const commandKeys = require('../../lib/commands-keyboard')
 const whenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
@@ -25,11 +24,7 @@ I don't know about this station, please double-check for typos.
 If you're sure it's my fault, please let my creator @derhuerst know.`
 
 const parseWhere = async (where, ctx) => {
-	await ctx.replyWithChatAction('typing')
-	let [station] = searchStations(where, 1, false, false) // non-fuzzy
-	if (!station) [station] = searchStations(where, 1, true, false) // fuzzy
-	if (station) station = allStations.find(s => s.id === station.id) // get details
-
+	const station = findStation(where)
 	if (station) await ctx.replyWithMarkdown(`I found ${station.name}.`)
 	else await ctx.replyWithMarkdown(unknownStation)
 	return station
