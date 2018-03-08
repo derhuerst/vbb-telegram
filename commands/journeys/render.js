@@ -1,6 +1,7 @@
 'use strict'
 
 const {DateTime} = require('luxon')
+const ms = require('ms')
 
 const TIMEZONE = process.env.TIMEZONE
 if (!TIMEZONE) {
@@ -23,7 +24,7 @@ const renderTime = (when) => {
 }
 
 const renderJourney = (j) => {
-	const dur = new Date(part.arrival) - new Date(part.departure)
+	const dur = new Date(j.arrival) - new Date(j.departure)
 	let str = [
 		'From',
 		j.origin ? j.origin.name : renderCoords(j.origin),
@@ -38,9 +39,9 @@ const renderJourney = (j) => {
 
 		// todo: emoji for line
 		// todo: links/commands for origin & destination
-		str += `\n${renderTime(part.departure)} – *${leg.origin.name}*\n`
+		str += `\n${renderTime(leg.departure)} – *${leg.origin.name}*\n`
 
-		const dur = new Date(part.arrival) - new Date(part.departure)
+		const dur = new Date(leg.arrival) - new Date(leg.departure)
 		if (leg.mode === 'walking') str += '*walk*'
 		else if (leg.line) str += `with *${leg.line.name}* to *${leg.direction}*`
 		else str += leg.mode

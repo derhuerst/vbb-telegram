@@ -63,7 +63,7 @@ const departures = async (ctx, next) => {
 	}
 	if (ctx.command) {
 		const ids = await ctx.storage.getTopLocations()
-		await ctx.replyWithMarkdown(promptWhere, getFrequentStationsKeys(ids))
+		await ctx.replyWithMarkdown(promptWhere, await getFrequentStationsKeys(ids))
 		return next() // await next message
 	}
 
@@ -97,7 +97,7 @@ const departures = async (ctx, next) => {
 
 	// fetch & render deps
 	await ctx.replyWithChatAction('typing')
-	const deps = await hafas.departures(where.id, when)
+	const deps = await hafas.departures(where.id, {when})
 	await printDeps(deps, ctx)
 	next()
 }

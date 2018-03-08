@@ -61,36 +61,38 @@ const parseWhen = async (when, ctx) => {
 const getFrequentStationKeys = async (ctx) => {
 	const ids = await ctx.storage.getTopLocations()
 	return getFrequentStationsKeys(ids, [
-		// Markup.locationRequestButton('use current location') // todo
+		Markup.locationRequestButton('use current location')
 	])
 }
 
 const journeys = async (ctx, next) => {
+	ctx.freqStationKeys = await getFrequentStationKeys(ctx)
+
 	// `/a spichernstr` shorthand
 	if (ctx.args && ctx.args[0]) {
-		const station = await parseWhere(ctx.args[0], ctx)
-		if (station) await ctx.storage.putData('origin', station)
+		const origin = await parseWhere(ctx.args[0], ctx)
+		if (origin) await ctx.storage.putData('origin', origin)
 		return next()
 	}
 	if (ctx.command) {
-		await ctx.replyWithMarkdown(promptOrigin, getFrequentStationKeys(ctx))
+		await ctx.replyWithMarkdown(promptOrigin, ctx.freqStationKeys)
 		return next() // await next message
 	}
 
 	let origin = await ctx.storage.getData('origin')
 	if (!origin) {
-		origin = await parseWhere(ctx.message.text, ctx)
+		origin = await parseWhere(ctx.message, ctx)
 		if (!origin) return next() // await next message
 		await ctx.storage.putData('origin', origin)
 		await ctx.storage.incLocation(origin.id)
 
-		await ctx.replyWithMarkdown(promptDest, getFrequentStationKeys(ctx))
+		await ctx.replyWithMarkdown(promptDest, ctx.freqStationKeys)
 		return next() // await next message
 	}
 
 	let destination = await ctx.storage.getData('destination')
 	if (!destination) {
-		destination = await parseWhere(ctx.message.text, ctx)
+		destination = await parseWhere(ctx.message, ctx)
 		if (!destination) return next() // await next message
 		await ctx.storage.putData('destination', destination)
 		await ctx.storage.incLocation(destination.id)
@@ -115,8 +117,8 @@ const journeys = async (ctx, next) => {
 
 	// fetch & render journeys
 	await ctx.replyWithChatAction('typing')
-	const journeys = await hafas.journeys(origin.id, destination.id, {when})
-	for (let j of journeys.length) {
+	const journeys = await hafas.journeys(origin, destination, {when})
+	for (let j of journeys) {
 		await ctx.replyWithMarkdown(renderJourney(j), commandKeys)
 	}
 
