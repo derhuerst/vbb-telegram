@@ -2,6 +2,7 @@
 
 const path = require('path')
 const Bot = require('telegraf')
+const url = require('url')
 
 const logging = require('./lib/logging')
 const session = require('./lib/session')
@@ -42,4 +43,29 @@ bot.use((ctx, next) => {
 	return handler(ctx, next)
 })
 
-bot.startPolling() // todo: web hook
+if (process.env.NODE_ENV === 'dev') {
+	bot.startPolling()
+} else {
+	const WEB_HOOK_HOST = process.env.WEB_HOOK_HOST
+	if (!WEB_HOOK_HOST) {
+		console.error('Missing WEB_HOOK_HOST env var.')
+		process.exit(1)
+	}
+	const WEB_HOOK_PATH = process.env.WEB_HOOK_PATH
+	if (!WEB_HOOK_PATH) {
+		console.error('Missing WEB_HOOK_PATH env var.')
+		process.exit(1)
+	}
+	const WEB_HOOK_PORT = process.env.WEB_HOOK_PORT && parseInt(process.env.WEB_HOOK_PORT)
+	if (!WEB_HOOK_PORT) {
+		console.error('Missing WEB_HOOK_PORT env var.')
+		process.exit(1)
+	}
+
+	bot.telegram.setWebhook(url.format({
+		protocol: 'https',
+		host: WEB_HOOK_HOST,
+		pathname: WEB_HOOK_PATH
+	}))
+	bot.startWebhook(WEB_HOOK_PATH, null, WEB_HOOK_PORT)
+}
