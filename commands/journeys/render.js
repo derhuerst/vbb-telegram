@@ -27,9 +27,9 @@ const renderJourney = (j) => {
 	const dur = new Date(j.arrival) - new Date(j.departure)
 	let str = [
 		'From',
-		j.origin ? j.origin.name : renderCoords(j.origin),
+		j.origin ? j.origin.name || j.origin.address : renderCoords(j.origin),
 		'to',
-		j.destination ? j.destination.name : renderCoords(j.destination),
+		j.destination ? j.destination.name || j.destination.address : renderCoords(j.destination),
 		'in',
 		ms(dur)
 	].join(' ') + '.\n'
