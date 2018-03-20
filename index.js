@@ -44,8 +44,14 @@ bot.use((ctx, next) => {
 })
 
 if (process.env.NODE_ENV === 'dev') {
-	bot.startPolling()
+	console.info('using polling')
+
+	bot.telegram.deleteWebhook()
+	.then(() => bot.startPolling())
+	.catch(console.error)
 } else {
+	console.info('using web hook')
+
 	const WEB_HOOK_HOST = process.env.WEB_HOOK_HOST
 	if (!WEB_HOOK_HOST) {
 		console.error('Missing WEB_HOOK_HOST env var.')
@@ -62,6 +68,7 @@ if (process.env.NODE_ENV === 'dev') {
 		process.exit(1)
 	}
 
+	bot.webhookReply = false
 	bot.telegram.setWebhook(url.format({
 		protocol: 'https',
 		host: WEB_HOOK_HOST,
