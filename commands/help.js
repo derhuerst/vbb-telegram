@@ -2,6 +2,12 @@
 
 const getCommandKeys = require('../lib/commands-keyboard')
 
+const HANDLE = process.env.HANDLE
+if (!HANDLE) {
+	console.error('Missing HANDLE env var.')
+	process.exit(1)
+}
+
 const text = `\
 *This bot lets you use public transport in Berlin more easily.* You can do this:
 \`/a(bfahrt)\` – Show departures at a station.
@@ -13,7 +19,11 @@ When specifying time, you can use the following formats:
 - \`tomorrow 17:20\`
 - \`8 pm\`
 - \`tuesday at 6\`
-The data behind this bot is from VBB, so departures & routing will be just as (in)accurate as in the BVG & VBB apps.`
+The data behind this bot is from VBB, so departures & routing will be just as (in)accurate as in the BVG & VBB apps.
+
+**When using this bot in a group**, telegram prevents it from listening to all messages. In this case you need to mention the bot in every message. For example:
+1. \`/a@${HANDLE} U Friedrichstr.\`
+2. \`@${HANDLE} in 10 min\``
 
 const help = async (ctx, next) => {
 	const group = ctx.chat.type === 'group'
