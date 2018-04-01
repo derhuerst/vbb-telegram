@@ -55,9 +55,9 @@ const printDeps = async (allDeps, ctx) => {
 }
 
 const departures = async (ctx, next) => {
-	// `/a spichernstr` shorthand
-	if (ctx.args && ctx.args[0]) {
-		const station = await parseWhere(ctx.args[0], ctx)
+	// `/a u spichernstr` shorthand
+	if (ctx.args && ctx.args.length > 0) {
+		const station = await parseWhere(ctx.args.join(' '), ctx)
 		if (station) await ctx.storage.putData('where', station)
 		return next()
 	}

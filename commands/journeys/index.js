@@ -68,9 +68,9 @@ const getFrequentStationKeys = async (ctx) => {
 const journeys = async (ctx, next) => {
 	ctx.freqStationKeys = await getFrequentStationKeys(ctx)
 
-	// `/a spichernstr` shorthand
-	if (ctx.args && ctx.args[0]) {
-		const origin = await parseWhere(ctx.args[0], ctx)
+	// `/j u spichernstr` shorthand
+	if (ctx.args && ctx.args.length > 0) {
+		const origin = await parseWhere(ctx.args.join(' '), ctx)
 		if (origin) await ctx.storage.putData('origin', origin)
 		return next()
 	}
