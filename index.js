@@ -4,6 +4,7 @@ const path = require('path')
 const Bot = require('telegraf')
 const url = require('url')
 
+const inGroupsOnlyMentions = require('./lib/in-groups-only-mentions')
 const textWithoutMention = require('./lib/text-without-mention')
 const logging = require('./lib/logging')
 const session = require('./lib/session')
@@ -31,6 +32,8 @@ if (!TOKEN) {
 const pathToDb = path.join(__dirname, 'vbb-telegram.ldb')
 
 const bot = new Bot(TOKEN)
+
+bot.use(inGroupsOnlyMentions)
 bot.use(logging)
 bot.use(textWithoutMention)
 bot.use(session(pathToDb))
