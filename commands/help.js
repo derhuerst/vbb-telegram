@@ -21,9 +21,10 @@ When specifying time, you can use the following formats:
 - \`tuesday at 6\`
 The data behind this bot is from VBB, so departures & routing will be just as (in)accurate as in the BVG & VBB apps.
 
-**When using this bot in a group**, telegram prevents it from listening to all messages. In this case you need to mention the bot in every message. For example:
-1. \`/a@${HANDLE} U Friedrichstr.\`
-2. \`@${HANDLE} in 10 min\``
+**When using this bot in a group**, telegram prevents it from listening to normal messages. In this case you need to have two choices:
+
+- Mention the bot in every message. For example: \`/a@${HANDLE} U Friedrichstr.\` and later \`@${HANDLE} in 10 min\`.
+- Always reply to the bot with the reply feature.`
 
 const help = async (ctx, next) => {
 	const group = ctx.chat.type === 'group'
