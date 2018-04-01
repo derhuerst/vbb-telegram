@@ -34,8 +34,8 @@ const pathToDb = path.join(__dirname, 'vbb-telegram.ldb')
 const bot = new Bot(TOKEN)
 
 bot.use(inGroupsOnlyMentions)
-bot.use(logging)
 bot.use(textWithoutMention)
+bot.use(logging)
 bot.use(session(pathToDb))
 bot.use(command)
 bot.use(storage)
@@ -80,3 +80,5 @@ if (process.env.NODE_ENV === 'dev') {
 	}))
 	bot.startWebhook(WEB_HOOK_PATH, null, WEB_HOOK_PORT)
 }
+
+bot.catch(console.error)
