@@ -69,7 +69,7 @@ const departures = async (ctx, next) => {
 
 	let where = await ctx.storage.getData('where')
 	if (!where) {
-		where = await parseWhere(ctx.message.text, ctx)
+		where = await parseWhere(ctx.message.textWithoutMention, ctx)
 		if (!where) return next() // await next message
 		await ctx.storage.putData('where', where)
 		await ctx.storage.incLocation(where.id)
@@ -80,7 +80,7 @@ const departures = async (ctx, next) => {
 
 	let when = await ctx.storage.getData('when')
 	if (!when) {
-		when = await parseWhen(ctx.message.text, ctx)
+		when = await parseWhen(ctx.message.textWithoutMention, ctx)
 		if (!when) return next() // await next message
 		await ctx.storage.putData('when', when)
 	}

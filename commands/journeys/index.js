@@ -29,12 +29,12 @@ const textOrLocation = `\
 Only location names like "U mehringdamm", "Kaiserdamm 26" and locations are supported.`
 
 const parseWhere = async (msg, ctx) => {
-	if (msg.text) {
-		let [loc] = searchStations(msg.text, 1, false, false) // non-fuzzy
+	if (msg.textWithoutMention) {
+		let [loc] = searchStations(msg.textWithoutMention, 1, false, false) // non-fuzzy
 		if (loc) {
 			loc = allStations.find(s => s.id === loc.id) // get details
 		} else {
-			[loc] = await hafas.locations(msg.text, {results: 1})
+			[loc] = await hafas.locations(msg.textWithoutMention, {results: 1})
 		}
 		const text = loc ? `I found ${loc.name || loc.address}.` : unknownStation
 		await ctx.replyWithMarkdown(text)
@@ -103,7 +103,7 @@ const journeys = async (ctx, next) => {
 
 	let when = await ctx.storage.getData('when')
 	if (!when) {
-		when = await parseWhen(ctx.message.text, ctx)
+		when = await parseWhen(ctx.message.textWithoutMention, ctx)
 		if (!when) return next() // await next message
 		await ctx.storage.putData('when', when)
 	}
