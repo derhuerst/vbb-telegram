@@ -6,8 +6,8 @@ const parseTime = require('parse-messy-time')
 const linesAt = require('vbb-lines-at')
 const hafas = require('vbb-hafas')
 
-const commandKeys = require('../../lib/commands-keyboard')
-const whenKeys = require('../../lib/when-keyboard')
+const getCommandKeys = require('../../lib/commands-keyboard')
+const getWhenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
 const renderDeps = require('./render')
 
@@ -50,7 +50,7 @@ const parseWhen = async (when, ctx) => {
 const printDeps = async (allDeps, ctx) => {
 	for (let i = 0; i < allDeps.length; i += 10) {
 		const deps = allDeps.slice(i, i + 10)
-		await ctx.replyWithMarkdown(renderDeps(deps), commandKeys)
+		await ctx.replyWithMarkdown(renderDeps(deps), getCommandKeys())
 	}
 }
 
@@ -74,7 +74,7 @@ const departures = async (ctx, next) => {
 		await ctx.storage.putData('where', where)
 		await ctx.storage.incLocation(where.id)
 
-		await ctx.replyWithMarkdown(promptWhen, whenKeys)
+		await ctx.replyWithMarkdown(promptWhen, getWhenKeys())
 		return next() // await next message
 	}
 

@@ -1,6 +1,6 @@
 'use strict'
 
-const commandsKeyboard = require('../lib/commands-keyboard')
+const getCommandKeys = require('../lib/commands-keyboard')
 
 const text = `\
 *This bot lets you use public transport in Berlin more easily.* You can do this:
@@ -16,7 +16,7 @@ When specifying time, you can use the following formats:
 The data behind this bot is from VBB, so departures & routing will be just as (in)accurate as in the BVG & VBB apps.`
 
 const help = async (ctx, next) => {
-	await ctx.replyWithMarkdown(text, commandsKeyboard)
+	await ctx.replyWithMarkdown(text, getCommandKeys())
 	next()
 }
 

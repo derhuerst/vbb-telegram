@@ -6,8 +6,8 @@ const parseTime = require('parse-messy-time')
 const Markup = require('telegraf/markup')
 const hafas = require('vbb-hafas')
 
-const commandKeys = require('../../lib/commands-keyboard')
-const whenKeys = require('../../lib/when-keyboard')
+const getCommandKeys = require('../../lib/commands-keyboard')
+const getWhenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
 const renderJourney = require('./render')
 
@@ -97,7 +97,7 @@ const journeys = async (ctx, next) => {
 		await ctx.storage.putData('destination', destination)
 		await ctx.storage.incLocation(destination.id)
 
-		await ctx.replyWithMarkdown(promptWhen, whenKeys)
+		await ctx.replyWithMarkdown(promptWhen, getWhenKeys())
 		return next() // await next message
 	}
 
@@ -119,7 +119,7 @@ const journeys = async (ctx, next) => {
 	await ctx.replyWithChatAction('typing')
 	const journeys = await hafas.journeys(origin, destination, {when})
 	for (let j of journeys) {
-		await ctx.replyWithMarkdown(renderJourney(j), commandKeys)
+		await ctx.replyWithMarkdown(renderJourney(j), getCommandKeys())
 	}
 
 	next()
