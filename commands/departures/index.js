@@ -50,7 +50,8 @@ const parseWhen = async (when, ctx) => {
 const printDeps = async (allDeps, ctx) => {
 	for (let i = 0; i < allDeps.length; i += 10) {
 		const deps = allDeps.slice(i, i + 10)
-		await ctx.replyWithMarkdown(renderDeps(deps), getCommandKeys())
+		const group = ctx.chat.type === 'group'
+		await ctx.replyWithMarkdown(renderDeps(deps), getCommandKeys(group))
 	}
 }
 
@@ -63,7 +64,8 @@ const departures = async (ctx, next) => {
 	}
 	if (ctx.command) {
 		const ids = await ctx.storage.getTopLocations()
-		await ctx.replyWithMarkdown(promptWhere, await getFrequentStationsKeys(ids))
+		const group = ctx.chat.type === 'group'
+		await ctx.replyWithMarkdown(promptWhere, await getFrequentStationsKeys(ids, group))
 		return next() // await next message
 	}
 
@@ -74,7 +76,8 @@ const departures = async (ctx, next) => {
 		await ctx.storage.putData('where', where)
 		await ctx.storage.incLocation(where.id)
 
-		await ctx.replyWithMarkdown(promptWhen, getWhenKeys())
+		const group = ctx.chat.type === 'group'
+		await ctx.replyWithMarkdown(promptWhen, getWhenKeys(group))
 		return next() // await next message
 	}
 

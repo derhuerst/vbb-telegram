@@ -11,14 +11,17 @@ const locationOnly = `Please send a location, other stuff is not supported yet.`
 const keyboard = Markup.keyboard([
 	Markup.locationRequestButton('send current location')
 ]).extra()
+const noKeyboard = Markup.keyboard([]).extra()
 
 const nearby = async (ctx, next) => {
+	const group = ctx.chat.type === 'group'
+
 	if (ctx.command) {
-		await ctx.replyWithMarkdown(promptWhere, keyboard)
+		await ctx.replyWithMarkdown(promptWhere, group ? noKeyboard : keyboard)
 		return next()
 	}
 	if (!ctx.message.location) {
-		await ctx.replyWithMarkdown(locationOnly, keyboard)
+		await ctx.replyWithMarkdown(locationOnly, group ? noKeyboard : keyboard)
 		return next()
 	}
 
@@ -38,7 +41,8 @@ const nearby = async (ctx, next) => {
 		await ctx.replyWithLocation(s.location.latitude, s.location.longitude)
 		// todo: link to departures, link to routes
 		const text = `${s.distance}m *${s.name}*`
-		if (i === (l - 1)) await ctx.replyWithMarkdown(text, getCommandKeys())
+		const group = ctx.chat.type === 'group'
+		if (i === (l - 1)) await ctx.replyWithMarkdown(text, getCommandKeys(group))
 		else await ctx.replyWithMarkdown(text)
 	}
 	next()

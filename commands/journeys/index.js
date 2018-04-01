@@ -60,9 +60,8 @@ const parseWhen = async (when, ctx) => {
 
 const getFrequentStationKeys = async (ctx) => {
 	const ids = await ctx.storage.getTopLocations()
-	return getFrequentStationsKeys(ids, [
-		Markup.locationRequestButton('use current location')
-	])
+	const group = ctx.chat.type === 'group'
+	return getFrequentStationsKeys(ids, group, true)
 }
 
 const journeys = async (ctx, next) => {
@@ -97,7 +96,8 @@ const journeys = async (ctx, next) => {
 		await ctx.storage.putData('destination', destination)
 		await ctx.storage.incLocation(destination.id)
 
-		await ctx.replyWithMarkdown(promptWhen, getWhenKeys())
+		const group = ctx.chat.type === 'group'
+		await ctx.replyWithMarkdown(promptWhen, getWhenKeys(group))
 		return next() // await next message
 	}
 
@@ -118,8 +118,9 @@ const journeys = async (ctx, next) => {
 	// fetch & render journeys
 	await ctx.replyWithChatAction('typing')
 	const journeys = await hafas.journeys(origin, destination, {when})
+	const group = ctx.chat.type === 'group'
 	for (let j of journeys) {
-		await ctx.replyWithMarkdown(renderJourney(j), getCommandKeys())
+		await ctx.replyWithMarkdown(renderJourney(j), getCommandKeys(group))
 	}
 
 	next()

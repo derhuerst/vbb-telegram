@@ -16,7 +16,8 @@ When specifying time, you can use the following formats:
 The data behind this bot is from VBB, so departures & routing will be just as (in)accurate as in the BVG & VBB apps.`
 
 const help = async (ctx, next) => {
-	await ctx.replyWithMarkdown(text, getCommandKeys())
+	const group = ctx.chat.type === 'group'
+	await ctx.replyWithMarkdown(text, getCommandKeys(group))
 	next()
 }
 
