@@ -23,8 +23,8 @@
 	"dependencies": {
 		"hifo": "^1.0.0",
 		"js-string-escape": "^1.0.1",
-		"level": "^3.0.0",
-		"luxon": "^0.5.3",
+		"level": "^4.0.0",
+		"luxon": "^1.3.3",
 		"ms": "^2.1.1",
 		"parse-messy-time": "^2.1.0",
 		"string-width": "^2.1.1",
