@@ -32,6 +32,9 @@ if (!TOKEN) {
 const pathToDb = path.join(__dirname, 'vbb-telegram.ldb')
 
 const bot = new Bot(TOKEN)
+bot.telegram.getMe().then(({username}) => {
+	bot.options.username = username
+})
 
 bot.use(inGroupsOnlyMentionsAndReplies)
 bot.use(textWithoutMention)
