@@ -4,8 +4,8 @@ const searchStations = require('vbb-stations-autocomplete')
 const allStations = require('vbb-stations/simple')
 const parseTime = require('parse-messy-time')
 const Markup = require('telegraf/markup')
-const hafas = require('vbb-hafas')
 
+const hafas = require('../../lib/hafas')
 const getCommandKeys = require('../../lib/commands-keyboard')
 const getWhenKeys = require('../../lib/when-keyboard')
 const getFrequentStationsKeys = require('../../lib/frequent-stations-keyboard')
@@ -117,7 +117,7 @@ const journeys = async (ctx, next) => {
 
 	// fetch & render journeys
 	await ctx.replyWithChatAction('typing')
-	const journeys = await hafas.journeys(origin, destination, {when})
+	const journeys = await hafas.journeys(origin, destination, {departure: when})
 	const group = ctx.chat.type === 'group'
 	for (let j of journeys) {
 		await ctx.replyWithMarkdown(renderJourney(j), getCommandKeys(group))

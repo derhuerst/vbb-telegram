@@ -1,8 +1,8 @@
 'use strict'
 
 const Markup = require('telegraf/markup')
-const hafas = require('vbb-hafas')
 
+const hafas = require('../lib/hafas')
 const getCommandKeys = require('../lib/commands-keyboard')
 
 const promptWhere = `Please share your location with me.`

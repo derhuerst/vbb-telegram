@@ -29,7 +29,7 @@
 		"parse-messy-time": "^2.1.0",
 		"string-width": "^2.1.1",
 		"telegraf": "^3.19.0",
-		"vbb-hafas": "^4.1.1",
+		"vbb-hafas": "^5.0.1",
 		"vbb-lines-at": "^3.11.0",
 		"vbb-stations": "^6.2.1",
 		"vbb-stations-autocomplete": "^3.2.0"

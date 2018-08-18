@@ -24,12 +24,16 @@ const renderTime = (when) => {
 }
 
 const renderJourney = (j) => {
-	const dur = new Date(j.arrival) - new Date(j.departure)
+	const firstLeg = j.legs[0]
+	const lastLeg = j.legs[j.legs.length - 1]
+	const dur = new Date(lastLeg.arrival) - new Date(firstLeg.departure)
+	const origin = firstLeg.origin
+	const destination = lastLeg.destination
 	let str = [
 		'From',
-		j.origin ? j.origin.name || j.origin.address : renderCoords(j.origin),
+		origin.name || origin.address || renderCoords(origin.location),
 		'to',
-		j.destination ? j.destination.name || j.destination.address : renderCoords(j.destination),
+		destination.name || destination.address || renderCoords(destination.location),
 		'in',
 		ms(dur)
 	].join(' ') + '.\n'
