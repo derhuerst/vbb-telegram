@@ -35,7 +35,7 @@ const nearby = async (ctx, next) => {
 	})
 
 	const l = nearby.length
-	for (let i = 0; i < l; i++) {
+	for (let i = 0; i < l || i < 10; i++) {
 		const s = nearby[i]
 
 		await ctx.replyWithLocation(s.location.latitude, s.location.longitude)
